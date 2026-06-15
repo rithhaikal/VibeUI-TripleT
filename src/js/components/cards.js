@@ -64,13 +64,21 @@ function renderMealCard(meal) {
             <span class="text-base font-bold text-primary font-display">RM ${meal.price.toFixed(2)}</span>
           </div>
           <button 
-            class="bg-accent hover:bg-accent-dark text-white p-3 rounded-2xl shadow-accent-glow hover:shadow-none transition-all flex items-center justify-center cursor-pointer active:scale-95"
-            onclick="event.stopPropagation(); window.app.addToCart('${meal.mealId}')"
+            class="meal-card-add-button"
+            onclick="event.stopPropagation(); window.app.addToCartWithFeedback(this, '${meal.mealId}')"
             aria-label="Add to cart"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
-            </svg>
+            <span class="meal-card-add-icon meal-card-add-icon-plus" aria-hidden="true">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+              </svg>
+            </span>
+            <span class="meal-card-add-icon meal-card-add-icon-check" aria-hidden="true">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.25 4.25L19 7"/>
+              </svg>
+            </span>
+            <span class="meal-card-add-label">Added</span>
           </button>
         </div>
       </div>

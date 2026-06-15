@@ -586,7 +586,12 @@ window.customerViews = {
       if (!meal) return '';
       return `
         <div class="flex items-center gap-4 p-3.5 bg-background rounded-2xl border border-secondary/5">
-          <img src="${meal.image}" alt="${meal.mealName}" class="w-16 h-16 rounded-xl object-cover border border-secondary/10" />
+          <img
+            src="${meal.image}"
+            alt="${meal.mealName}"
+            class="w-16 h-16 flex-shrink-0 rounded-xl object-cover border border-secondary/10 bg-white"
+            onerror="this.onerror=null; this.src='assets/dumplings.gif'; this.classList.remove('object-cover'); this.classList.add('object-contain', 'p-1');"
+          />
           <div class="flex-grow min-w-0">
             <h4 class="font-display font-semibold text-sm text-primary truncate">${meal.mealName}</h4>
             <span class="text-xs text-secondary-light block mb-2">RM ${meal.price.toFixed(2)}</span>
