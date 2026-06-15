@@ -32,6 +32,11 @@ class App {
 
   // View router
   switchView(view) {
+    const currentState = window.store.state;
+    if (view === 'track-order' && currentState.activeView !== 'tracking' && currentState.activeOrder && currentState.activeOrder.status !== 'delivered') {
+      view = 'tracking';
+    }
+
     window.store.setState({ activeView: view });
     
     // Auto scroll to top on page switches
@@ -84,17 +89,40 @@ class App {
   }
 
   // Rating form submittal
-  submitRating(mealId, rating, reviewText) {
-    window.store.addReview(mealId, rating, reviewText);
+  submitRating(orderId, mealId, rating, reviewText) {
+    window.store.addReview(orderId, mealId, rating, reviewText);
     
     // Clear tracked order tracking since review has been submitted
     window.store.setState({ activeOrder: null });
+    if (window.app.clearTrackResult) {
+      window.app.clearTrackResult();
+    }
     
     // Alert customer (premium style)
     this.showFloatingAlert("Thank you! Your review has been submitted successfully.", "success");
     
-    // Redirect home
-    this.switchView('home');
+    // Open the meal details modal (reviews screen) to show the submitted review
+    this.openMealDetails(mealId);
+  }
+
+  setInteractiveRating(rating, btn) {
+    const form = btn.closest('form');
+    if (form) {
+      const hiddenInput = form.querySelector('.review-rating-val');
+      if (hiddenInput) {
+        hiddenInput.value = rating;
+      }
+      const stars = form.querySelectorAll('.star-btn');
+      stars.forEach((star, idx) => {
+        if (idx + 1 <= rating) {
+          star.classList.remove('text-secondary/20');
+          star.classList.add('text-accent');
+        } else {
+          star.classList.remove('text-accent');
+          star.classList.add('text-secondary/20');
+        }
+      });
+    }
   }
 
   // Display clean floating snackbar/alert
@@ -120,6 +148,19 @@ class App {
 
   // Master layout rendering engine based on activeState
   render(state) {
+    if (state.activeView === 'tracking' && state.activeOrder && state.activeOrder.status === 'delivered') {
+      const order = state.activeOrder;
+      
+      // Update state bypass to avoid direct infinite recursion
+      window.store.state.activeOrder = null;
+      window.store.state.activeView = 'track-order';
+      
+      setTimeout(() => {
+        window.app.trackOrderLookup(order.orderId);
+      }, 0);
+      return;
+    }
+
     const isAdmin = state.activeView.startsWith('admin-');
     
     // 1. Manage visible layouts Shell
@@ -265,6 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.app.updateCartQuantity   = app.updateCartQuantity.bind(app);
   window.app.submitRating         = app.submitRating.bind(app);
   window.app.showFloatingAlert    = app.showFloatingAlert.bind(app);
+  window.app.setInteractiveRating = app.setInteractiveRating.bind(app);
 
   app.start();
 });
