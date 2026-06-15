@@ -63,13 +63,14 @@
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="src/css/index.css">
+  <link rel="stylesheet" href="src/css/hero.css">
 </head>
 <body class="bg-background min-h-screen flex flex-col justify-between">
 
   <!-- ============================================ -->
   <!-- CUSTOMER HEADER (Desktop Navigation)         -->
   <!-- ============================================ -->
-  <header id="nav-header" class="fixed top-0 left-0 right-0 z-40 bg-white/85 backdrop-blur-md border-b border-secondary/10 transition-all">
+  <header id="nav-header" class="fixed top-0 left-0 right-0 z-40 bg-white/85 backdrop-blur-md border-b border-secondary/10 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
       <!-- Logo / Branding -->
       <div class="flex items-center gap-2.5 cursor-pointer" onclick="window.app.switchView('home')">
@@ -273,6 +274,6 @@
   <script src="src/js/views/admin.js"></script>
 
   <!-- 5. App Orchestrator -->
-  <script src="src/js/app.js"></script>
+  <script type="module" src="src/js/app.js"></script>
 </body>
 </html>

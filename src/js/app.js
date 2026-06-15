@@ -1,4 +1,5 @@
 // app.js - Main orchestrator tying Views, Components, and the State Store together
+import { initHero3D } from './components/hero3d.js';
 
 class App {
   constructor() {
@@ -8,6 +9,7 @@ class App {
     this.sidebarAdmin = null;
     this.cartDrawer = null;
     this.detailsModal = null;
+    this._hero3d = null;  // Active Three.js hero instance
   }
 
   // Initialize Application
@@ -32,6 +34,11 @@ class App {
 
   // View router
   switchView(view) {
+    // Destroy hero 3D if navigating away from home
+    if (view !== 'home' && this._hero3d) {
+      this._hero3d.destroy();
+      this._hero3d = null;
+    }
     window.store.setState({ activeView: view });
     
     // Auto scroll to top on page switches
@@ -121,6 +128,7 @@ class App {
   // Master layout rendering engine based on activeState
   render(state) {
     const isAdmin = state.activeView.startsWith('admin-');
+    const isHome = state.activeView === 'home';
     
     // 1. Manage visible layouts Shell
     const contentWrapper = document.getElementById('content-wrapper');
@@ -131,11 +139,14 @@ class App {
       this.navMobile.classList.add('hidden');
       this.sidebarAdmin.classList.remove('hidden');
       this.sidebarAdmin.classList.add('flex');
+      // Reset nav to solid
+      this.navHeader.classList.remove('nav-transparent');
+      this.navHeader.classList.add('nav-solid');
       
-      contentWrapper.classList.remove('max-w-7xl', 'px-4', 'md:px-8');
+      contentWrapper.classList.remove('max-w-7xl', 'px-4', 'md:px-8', 'hero-content-wrapper');
       contentWrapper.classList.add('w-full', 'px-6', 'md:px-10');
       
-      mainBody.classList.remove('pt-24');
+      mainBody.classList.remove('pt-0', 'hero-main');
       mainBody.classList.add('lg:pl-64', 'pt-6');
       
       this.updateAdminSidebarActiveLink(state.activeView);
@@ -144,12 +155,23 @@ class App {
       this.navMobile.classList.remove('hidden');
       this.sidebarAdmin.classList.add('hidden');
       this.sidebarAdmin.classList.remove('flex');
-      
-      contentWrapper.classList.remove('w-full', 'px-6', 'md:px-10');
-      contentWrapper.classList.add('max-w-7xl', 'px-4', 'md:px-8');
-      
-      mainBody.classList.remove('lg:pl-64', 'pt-6');
-      mainBody.classList.add('pt-24');
+
+      if (isHome) {
+        // Hero view: full-screen, transparent nav, no padding-top on main
+        contentWrapper.classList.remove('w-full', 'px-6', 'md:px-10', 'max-w-7xl', 'px-4', 'md:px-8');
+        contentWrapper.classList.add('hero-content-wrapper');
+        mainBody.classList.remove('lg:pl-64', 'pt-6', 'pt-24');
+        mainBody.classList.add('pt-0', 'hero-main');
+        this.navHeader.classList.remove('nav-solid');
+        this.navHeader.classList.add('nav-transparent');
+      } else {
+        contentWrapper.classList.remove('w-full', 'px-6', 'md:px-10', 'hero-content-wrapper');
+        contentWrapper.classList.add('max-w-7xl', 'px-4', 'md:px-8');
+        mainBody.classList.remove('lg:pl-64', 'pt-6', 'pt-0', 'hero-main');
+        mainBody.classList.add('pt-24');
+        this.navHeader.classList.remove('nav-transparent');
+        this.navHeader.classList.add('nav-solid');
+      }
       
       this.updateHeaderCartBadge(window.store.getCartCount());
       this.updateHeaderActiveLinks(state.activeView);
@@ -162,7 +184,16 @@ class App {
       
       switch (state.activeView) {
         case 'home':
+          // Destroy any existing hero first
+          if (this._hero3d) {
+            this._hero3d.destroy();
+            this._hero3d = null;
+          }
           window.customerViews.renderHome(this.viewContainer);
+          // Init 3D hero after DOM is ready
+          requestAnimationFrame(() => {
+            this._hero3d = initHero3D('hero-canvas');
+          });
           break;
         case 'catalog':
           window.customerViews.renderCatalog(this.viewContainer);
@@ -265,6 +296,27 @@ document.addEventListener('DOMContentLoaded', () => {
   window.app.updateCartQuantity   = app.updateCartQuantity.bind(app);
   window.app.submitRating         = app.submitRating.bind(app);
   window.app.showFloatingAlert    = app.showFloatingAlert.bind(app);
+  window.app.updatePlannerQty     = (type, change) => window.customerViews.updatePlannerQty(type, change);
+  window.app.addCustomSteamerToCart = () => window.customerViews.addCustomSteamerToCart();
+
+  // Navbar scroll transparency handler
+  let navScrollListener = null;
+  function setupNavScrollBehavior() {
+    const header = document.getElementById('nav-header');
+    if (!header) return;
+    if (navScrollListener) window.removeEventListener('scroll', navScrollListener);
+    navScrollListener = () => {
+      if (header.classList.contains('nav-transparent')) {
+        if (window.scrollY > 60) {
+          header.classList.add('nav-scrolled');
+        } else {
+          header.classList.remove('nav-scrolled');
+        }
+      }
+    };
+    window.addEventListener('scroll', navScrollListener, { passive: true });
+  }
+  setupNavScrollBehavior();
 
   app.start();
 });
