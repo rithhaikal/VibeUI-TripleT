@@ -135,7 +135,7 @@ function renderMockMap(status) {
 
         <!-- Restaurant Node (Start) -->
         <circle cx="50" cy="150" r="10" fill="#1E352F" stroke="#FFFFFF" stroke-width="2.5"/>
-        <text x="50" y="172" fill="#1E352F" font-family="Outfit, sans-serif" font-size="8" font-weight="bold" text-anchor="middle">Hot Meal Bar (KTF)</text>
+        <text x="50" y="172" fill="#1E352F" font-family="Outfit, sans-serif" font-size="8" font-weight="bold" text-anchor="middle">Hot Meal Ba (KTF)</text>
         
         <!-- Customer Node (Destination) -->
         <circle cx="350" cy="50" r="10" fill="#3D8B6F" stroke="#FFFFFF" stroke-width="2.5"/>

@@ -49,7 +49,7 @@ window.customerViews = {
       <!-- ════════════════════════════════════════════════════ -->
       <!-- FULL-SCREEN PREMIUM HERO                            -->
       <!-- ════════════════════════════════════════════════════ -->
-      <section id="hero-section" class="hero-fullscreen" aria-label="Hot Meal Bar Hero">
+      <section id="hero-section" class="hero-fullscreen" aria-label="Hot Meal Ba Hero">
 
         <!-- Subtle radial vignette -->
         <div class="hero-vignette" aria-hidden="true"></div>
