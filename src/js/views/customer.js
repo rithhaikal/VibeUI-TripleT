@@ -1389,10 +1389,19 @@ window.customerViews = {
         `;
       } else {
         resultHtml = `
-          <div class="glass-card rounded-[2rem] p-12 text-center border border-secondary/5">
+          <div class="glass-card rounded-[2rem] p-12 text-center border border-secondary/5 relative">
+            <button
+              onclick="window.app.clearTrackResult()"
+              class="absolute top-6 left-6 w-8 h-8 rounded-xl border border-secondary/20 bg-white flex items-center justify-center hover:border-accent/40 hover:bg-accent/5 transition-all cursor-pointer"
+              title="Back to order list"
+            >
+              <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+              </svg>
+            </button>
             <svg class="w-12 h-12 mx-auto mb-4 text-secondary/35" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
             <p class="font-display font-bold text-lg text-primary mb-2">Order Not Found</p>
-            <p class="text-xs text-secondary-light">No order matches "${trackOrderResult.query}". Please check the order ID and try again.</p>
+            <p class="text-xs text-secondary-light">No order matches "${escapeAttribute(trackOrderResult.query)}". Please check the order ID and try again.</p>
           </div>
         `;
       }
