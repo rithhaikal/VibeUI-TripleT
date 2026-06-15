@@ -200,10 +200,10 @@ window.customerViews = {
           </div>
           
           <!-- Steamer Visual Display -->
-          <div class="w-full lg:w-1/2 flex items-center justify-center">
-            <div class="relative w-72 h-72 rounded-full bg-[#D4C3A3] border-8 border-[#BFA781] shadow-lg flex items-center justify-center overflow-hidden">
+          <div class="w-full lg:w-1/2 flex flex-col items-center justify-center gap-4">
+            <div class="relative w-72 h-72 rounded-full steamer-outer-3d flex items-center justify-center overflow-hidden">
               <!-- Bamboo texture background -->
-              <div class="absolute inset-2 rounded-full border-4 border-[#A3885F] bg-[#E5D7BE] flex items-center justify-center opacity-90"></div>
+              <div class="absolute inset-2 rounded-full steamer-inner-3d flex items-center justify-center opacity-95"></div>
               
               <!-- Bamboo weave lines -->
               <div class="absolute inset-0 border-t border-black/5 rotate-12 pointer-events-none"></div>
@@ -215,7 +215,50 @@ window.customerViews = {
                 <!-- Rendered Dynamically -->
               </div>
               
-              <div class="absolute bottom-2 text-[10px] font-bold text-[#8A6A3A] bg-[#F4ECD8]/80 px-2 py-0.5 rounded-full border border-[#D4C3A3] z-20">12 PCS BASKET</div>
+              <div class="absolute bottom-3 text-[10px] font-bold text-[#8A6A3A] bg-[#FAF5E8] px-3 py-1 rounded-full border border-[#D4C3A3] shadow-sm z-20 font-display">12 PCS BASKET</div>
+            </div>
+
+            <!-- Dumpling Color Legend -->
+            <div class="flex items-center gap-4">
+              <div class="flex items-center gap-1.5">
+                <svg width="18" height="14" viewBox="0 0 60 52" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <radialGradient id="leg-c" cx="38%" cy="28%" r="68%">
+                      <stop offset="0%" stop-color="#FFFBF0"/>
+                      <stop offset="55%" stop-color="#FAD89E"/>
+                      <stop offset="100%" stop-color="#8C5D0B"/>
+                    </radialGradient>
+                  </defs>
+                  <path d="M7,33 C5,22 12,10 22,6 C27,4 33,4 38,6 C48,10 55,22 53,33 C50,41 42,46 30,46 C18,46 10,41 7,33 Z" fill="url(#leg-c)"/>
+                </svg>
+                <span class="text-[10px] font-semibold text-secondary-light">Chicken</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <svg width="18" height="14" viewBox="0 0 60 52" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <radialGradient id="leg-b" cx="38%" cy="28%" r="68%">
+                      <stop offset="0%" stop-color="#FFF0E8"/>
+                      <stop offset="55%" stop-color="#DF9B7A"/>
+                      <stop offset="100%" stop-color="#6D2B14"/>
+                    </radialGradient>
+                  </defs>
+                  <path d="M7,33 C5,22 12,10 22,6 C27,4 33,4 38,6 C48,10 55,22 53,33 C50,41 42,46 30,46 C18,46 10,41 7,33 Z" fill="url(#leg-b)"/>
+                </svg>
+                <span class="text-[10px] font-semibold text-secondary-light">Beef</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <svg width="18" height="14" viewBox="0 0 60 52" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <radialGradient id="leg-v" cx="38%" cy="28%" r="68%">
+                      <stop offset="0%" stop-color="#F4FDF5"/>
+                      <stop offset="55%" stop-color="#AEDDAF"/>
+                      <stop offset="100%" stop-color="#315C34"/>
+                    </radialGradient>
+                  </defs>
+                  <path d="M7,33 C5,22 12,10 22,6 C27,4 33,4 38,6 C48,10 55,22 53,33 C50,41 42,46 30,46 C18,46 10,41 7,33 Z" fill="url(#leg-v)"/>
+                </svg>
+                <span class="text-[10px] font-semibold text-secondary-light">Vegetarian</span>
+              </div>
             </div>
           </div>
         </div>
@@ -301,18 +344,120 @@ window.customerViews = {
     this.renderSteamerVisual();
   },
 
+  // Helper to generate a 3D dumpling SVG with radial gradients and fold depth styling
+  render3DDumplingSVG(type, index) {
+    const gradients = {
+      chicken: {
+        start: '#FFFBF0',  // soft cream highlight
+        mid: '#FAD89E',    // warm yellow/gold
+        end: '#D99B26',    // rich base amber
+        shadow: '#8C5D0B'  // deep gold/brown shadow
+      },
+      beef: {
+        start: '#FFF0E8',  // soft peach highlight
+        mid: '#DF9B7A',    // sienna brown/orange
+        end: '#B0593B',    // base sienna/terracotta
+        shadow: '#6D2B14'  // deep sienna/brown shadow
+      },
+      veg: {
+        start: '#F4FDF5',  // soft mint highlight
+        mid: '#AEDDAF',    // fresh light green
+        end: '#62A966',    // base green
+        shadow: '#315C34'  // deep forest green shadow
+      }
+    };
+    
+    const grad = gradients[type] || gradients.chicken;
+    
+    return `
+      <div class="dumpling-svg-wrapper w-11 h-9" title="${type.charAt(0).toUpperCase() + type.slice(1)} Dumpling">
+        <svg class="w-full h-full" viewBox="0 0 60 52" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Radial gradient for 3D body volume: top-left highlight fading to base then deep shadow -->
+            <radialGradient id="grad-body-${type}-${index}" cx="38%" cy="28%" r="68%">
+              <stop offset="0%" stop-color="${grad.start}" />
+              <stop offset="28%" stop-color="${grad.start}" stop-opacity="0.85" />
+              <stop offset="55%" stop-color="${grad.mid}" />
+              <stop offset="80%" stop-color="${grad.end}" />
+              <stop offset="100%" stop-color="${grad.shadow}" />
+            </radialGradient>
+
+            <!-- Seam strip gradient from highlight to shadow vertically -->
+            <linearGradient id="grad-seam-${type}-${index}" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="${grad.start}" stop-opacity="0.95" />
+              <stop offset="45%" stop-color="${grad.mid}" />
+              <stop offset="100%" stop-color="${grad.shadow}" stop-opacity="0.8" />
+            </linearGradient>
+
+            <!-- Soft blur for contact shadow -->
+            <filter id="blur-shadow-${type}-${index}" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="2" />
+            </filter>
+          </defs>
+
+          <!-- Ambient contact shadow ellipse (blurred) -->
+          <ellipse cx="30" cy="47" rx="19" ry="3.5"
+            fill="${grad.shadow}" opacity="0.35"
+            filter="url(#blur-shadow-${type}-${index})" />
+
+          <!-- Main body: plump jiaozi half-moon belly -->
+          <path d="M 7,33 C 5,22 12,10 22,6 C 27,4 33,4 38,6 C 48,10 55,22 53,33 C 50,41 42,46 30,46 C 18,46 10,41 7,33 Z"
+            fill="url(#grad-body-${type}-${index})"
+            stroke="${grad.end}" stroke-width="0.5" stroke-opacity="0.4"
+          />
+
+          <!-- Crimped seam: the folded top ridge of the dumpling -->
+          <!-- Main seam arc -->
+          <path d="M 7,33 C 5,22 12,10 22,6 C 27,4 33,4 38,6 C 48,10 55,22 53,33"
+            fill="none"
+            stroke="url(#grad-seam-${type}-${index})"
+            stroke-width="3.5"
+            stroke-linecap="round"
+          />
+          <!-- Specular highlight along seam top -->
+          <path d="M 10,29 C 10,20 16,11 25,8 C 29,6 34,6 38,8 C 45,11 50,20 50,29"
+            fill="none"
+            stroke="rgba(255,255,255,0.5)"
+            stroke-width="1.2"
+            stroke-linecap="round"
+          />
+
+          <!-- Crimp fold tucks: wave pattern across the seam -->
+          <path d="M 16,20 Q 18,17 20,20 Q 22,23 24,20 Q 26,17 28,20 Q 30,23 32,20 Q 34,17 36,20 Q 38,23 40,20 Q 42,17 44,20"
+            fill="none"
+            stroke="${grad.shadow}"
+            stroke-width="1.2"
+            stroke-linecap="round"
+            opacity="0.55"
+          />
+          <!-- Highlight echo of crimp wave -->
+          <path d="M 16,19 Q 18,16 20,19 Q 22,22 24,19 Q 26,16 28,19 Q 30,22 32,19 Q 34,16 36,19 Q 38,22 40,19 Q 42,16 44,19"
+            fill="none"
+            stroke="rgba(255,255,255,0.35)"
+            stroke-width="0.7"
+            stroke-linecap="round"
+          />
+
+          <!-- Specular highlight blob: small gleam to show 3D curvature -->
+          <ellipse cx="21" cy="15" rx="5" ry="3.5"
+            fill="${grad.start}" opacity="0.6"
+            transform="rotate(-15 21 15)"
+          />
+          <ellipse cx="21" cy="15" rx="2.5" ry="1.8"
+            fill="white" opacity="0.45"
+            transform="rotate(-15 21 15)"
+          />
+        </svg>
+      </div>
+    `;
+  },
+
   // Render Steamer graphics
   renderSteamerVisual() {
     const slotsContainer = document.getElementById('steamer-slots');
     if (!slotsContainer) return;
 
     slotsContainer.innerHTML = '';
-    
-    const colors = {
-      chicken: 'bg-[#F2D7B4] border-[#D1B187]', // Creamy yellow
-      beef: 'bg-[#C58B70] border-[#9E654C]',    // Light brown
-      veg: 'bg-[#C2E3C4] border-[#8FB892]'      // Light green
-    };
 
     const dumplingItems = [];
     for (let i = 0; i < plannerState.chicken; i++) dumplingItems.push('chicken');
@@ -325,14 +470,10 @@ window.customerViews = {
     for (let i = 0; i < 12; i++) {
       const type = dumplingItems[i];
       if (type) {
-        slotsContainer.innerHTML += `
-          <div class="w-10 h-8 rounded-t-full rounded-b-2xl border-2 shadow-sm flex items-center justify-center text-[8px] font-bold text-black/50 ${colors[type]} animate-slide-up transform hover:scale-110 transition-transform cursor-pointer" title="${type} Dumpling">
-            🥟
-          </div>
-        `;
+        slotsContainer.innerHTML += this.render3DDumplingSVG(type, i);
       } else {
         slotsContainer.innerHTML += `
-          <div class="w-10 h-8 rounded-full border border-dashed border-black/10 flex items-center justify-center text-[8px] font-bold text-black/10">
+          <div class="w-11 h-9 rounded-full steamer-empty-slot-3d flex items-center justify-center text-xs font-bold font-display cursor-pointer" title="Empty Slot">
             +
           </div>
         `;
