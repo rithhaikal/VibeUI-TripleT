@@ -852,6 +852,83 @@ window.customerViews = {
     const zoneId = formData.get('zoneId');
     
     window.store.placeOrder({ address, name, phone, payment, zoneId });
+
+    // Show animated confirmation overlay on top of tracking view
+    const activeOrder = window.store.state.activeOrder;
+    if (activeOrder) {
+      this.showOrderConfirmation(activeOrder.orderId, name);
+    }
+  },
+
+  // --- Order Confirmation Overlay ---
+  showOrderConfirmation(orderId, customerName) {
+    const existing = document.getElementById('order-confirm-overlay');
+    if (existing) existing.remove();
+
+    const firstName = customerName ? customerName.trim().split(' ')[0] : '';
+    const greeting = firstName ? `, <strong>${firstName}</strong>` : '';
+
+    const overlay = document.createElement('div');
+    overlay.id = 'order-confirm-overlay';
+    overlay.innerHTML = `
+      <div class="oc-backdrop"></div>
+      <div class="oc-panel animate-slide-up" role="dialog" aria-modal="true" aria-labelledby="oc-title">
+
+        <!-- Animated check icon -->
+        <div class="oc-icon-ring">
+          <svg class="oc-svg" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle class="oc-circle" cx="26" cy="26" r="23" stroke-width="2.5"/>
+            <path class="oc-tick" d="M14 26l8.5 8.5L38 18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <!-- Headline -->
+        <div class="oc-body">
+          <h2 id="oc-title" class="oc-title">Order Confirmed!</h2>
+          <p class="oc-sub">Thank you${greeting}! Your hand-folded dumplings are being prepared now.</p>
+
+          <!-- Order ID pill -->
+          <div class="oc-id-pill">
+            <span class="oc-id-label">Order ID</span>
+            <span class="oc-id-value">${orderId}</span>
+          </div>
+
+          <!-- Timer note -->
+          <p class="oc-note">Redirecting to live tracking in 5 seconds&hellip;</p>
+        </div>
+
+        <!-- CTA button -->
+        <button
+          onclick="window.app.dismissOrderConfirmation()"
+          class="oc-btn"
+          id="oc-track-btn"
+        >
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+          Track My Order
+        </button>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // Auto-dismiss after 5 seconds
+    if (this._confirmTimer) clearTimeout(this._confirmTimer);
+    this._confirmTimer = setTimeout(() => {
+      window.app.dismissOrderConfirmation();
+    }, 5000);
+  },
+
+  dismissOrderConfirmation() {
+    const overlay = document.getElementById('order-confirm-overlay');
+    if (overlay) {
+      overlay.style.opacity = '0';
+      overlay.style.transition = 'opacity 0.3s ease';
+      setTimeout(() => overlay.remove(), 320);
+    }
+    if (this._confirmTimer) {
+      clearTimeout(this._confirmTimer);
+      this._confirmTimer = null;
+    }
   },
 
   // Render Live Order Tracking page
@@ -1546,3 +1623,4 @@ window.app.openLocationChangeModal = window.customerViews.openLocationChangeModa
 window.app.closeLocationChangeModal = window.customerViews.closeLocationChangeModal.bind(window.customerViews);
 window.app.previewLocationFee = window.customerViews.previewLocationFee.bind(window.customerViews);
 window.app.submitLocationChange = window.customerViews.submitLocationChange.bind(window.customerViews);
+window.app.dismissOrderConfirmation = window.customerViews.dismissOrderConfirmation.bind(window.customerViews);

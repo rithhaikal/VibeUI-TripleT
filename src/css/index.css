@@ -534,3 +534,183 @@ button:active {
     padding-left: 0 !important;
   }
 }
+
+/* ----------------------------------------------------------
+   Order Confirmation Overlay
+   ---------------------------------------------------------- */
+
+/* Keyframes for animated SVG checkmark */
+@keyframes ocCircleIn {
+  from { stroke-dashoffset: 145; }
+  to   { stroke-dashoffset: 0;   }
+}
+@keyframes ocTickIn {
+  from { stroke-dashoffset: 42; }
+  to   { stroke-dashoffset: 0;  }
+}
+@keyframes ocIconPop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  60%  { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Full-screen fixed overlay */
+#order-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Frosted backdrop */
+.oc-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 30, 26, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: fadeIn 0.3s ease both;
+}
+
+/* White card panel */
+.oc-panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 24rem);
+  background: #ffffff;
+  border-radius: 2rem;
+  padding: 2.25rem 1.75rem 2rem;
+  text-align: center;
+  border: 1px solid rgba(122, 111, 93, 0.12);
+  box-shadow: 0 40px 80px -20px rgba(15, 30, 26, 0.40);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* Animated icon ring */
+.oc-icon-ring {
+  width: 76px;
+  height: 76px;
+  animation: ocIconPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+}
+
+.oc-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Circle stroke draws in */
+.oc-circle {
+  stroke: #3D8B6F;
+  fill: rgba(61, 139, 111, 0.07);
+  stroke-dasharray: 145;
+  stroke-dashoffset: 145;
+  animation: ocCircleIn 0.55s ease-out 0.12s forwards;
+}
+
+/* Tick/checkmark draws in after circle */
+.oc-tick {
+  stroke: #3D8B6F;
+  fill: none;
+  stroke-dasharray: 42;
+  stroke-dashoffset: 42;
+  animation: ocTickIn 0.38s ease-out 0.58s forwards;
+}
+
+/* Text block */
+.oc-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.oc-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #1E352F;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.oc-sub {
+  font-size: 0.84rem;
+  color: #7A6F5D;
+  margin: 0;
+  line-height: 1.55;
+  max-width: 28ch;
+}
+
+/* Order ID pill badge */
+.oc-id-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: #F7F5F0;
+  border: 1px solid rgba(122, 111, 93, 0.14);
+  border-radius: 999px;
+  padding: 0.35rem 1rem;
+  margin-top: 0.25rem;
+}
+
+.oc-id-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  color: #9E927F;
+}
+
+.oc-id-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1E352F;
+  letter-spacing: 0.02em;
+}
+
+/* Redirect note */
+.oc-note {
+  font-size: 0.68rem;
+  color: #B0A892;
+  margin: 0;
+  margin-top: 0.1rem;
+}
+
+/* Gold CTA button */
+.oc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  background: #C49A45;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px -6px rgba(196, 154, 69, 0.38);
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.oc-btn:hover {
+  background: #B08930;
+  box-shadow: 0 12px 28px -8px rgba(196, 154, 69, 0.45);
+}
+
+.oc-btn:active {
+  transform: scale(0.97) !important;
+  box-shadow: none;
+}
+
