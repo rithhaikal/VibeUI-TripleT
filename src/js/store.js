@@ -1,5 +1,4 @@
 // store.js - Unified Client-Side State management
-
 class AppStore {
   constructor() {
     this.state = {
@@ -39,38 +38,21 @@ class AppStore {
     }
   }
 
-  // Load JSON datasets into state memory
+  // Load local JS datasets into state memory
   async init() {
     try {
-      const fetchJSON = async (filename) => {
-        const res = await fetch(`/data/${filename}`);
-        if (!res.ok) throw new Error(`Failed to load ${filename}`);
-        return await res.json();
-      };
-
-      const [meals, customers, orders, delivery, ratings] = await Promise.all([
-        fetchJSON('meals.json'),
-        fetchJSON('customers.json'),
-        fetchJSON('orders.json'),
-        fetchJSON('delivery.json'),
-        fetchJSON('ratings.json')
-      ]);
-
-      this.state.meals = meals;
-      this.state.customers = customers;
-      this.state.orders = orders;
-      this.state.delivery = delivery;
-      this.state.ratings = ratings;
-
-      // Load cart from LocalStorage if present
-      const cachedCart = localStorage.getItem('hotmeal_cart');
-      if (cachedCart) {
-        this.state.cart = JSON.parse(cachedCart);
-      }
+      this.state.meals = window.mealsData || [];
+      this.state.customers = window.customersData || [];
+      this.state.orders = window.ordersData || [];
+      this.state.delivery = window.deliveryData || [];
+      this.state.ratings = window.ratingsData || [];
+      
+      // Cart is strictly in-memory session state (no localStorage cache read)
+      this.state.cart = [];
 
       this.notify();
     } catch (err) {
-      console.error("Error loading JSON datasets:", err);
+      console.error("Error loading local datasets:", err);
     }
   }
 
@@ -110,7 +92,7 @@ class AppStore {
 
   saveCart(cart) {
     this.state.cart = cart;
-    localStorage.setItem('hotmeal_cart', JSON.stringify(cart));
+    // Strictly in-memory; do not save to localStorage
     this.notify();
   }
 
@@ -129,16 +111,27 @@ class AppStore {
   placeOrder(addressDetails) {
     const orderId = `ord_${randomId(1000, 9999)}`;
     const trackingId = `track_${randomId(8000, 9999)}`;
+    const cart = this.state.cart;
     
+    if (cart.length === 0) return;
+
+    // Calculate total quantity and amount
+    const totalQty = cart.reduce((s, i) => s + i.quantity, 0);
+    const totalAmount = parseFloat(this.getCartTotal().toFixed(2));
+    const commission = parseFloat((totalQty * 3.00).toFixed(2)); // RM 3.00 commission per pack
+
     // Create new order record
     const newOrder = {
       orderId,
-      customerId: 'cust_001', // Standard guest customer ID
-      mealId: this.state.cart[0].mealId, // Main item reference
-      quantity: this.state.cart.reduce((s, i) => s + i.quantity, 0),
-      amount: parseFloat(this.getCartTotal().toFixed(2)),
+      customerId: 'cust_001', // Ahmad Farhan
+      mealId: cart[0].mealId, // Main item reference
+      quantity: totalQty,
+      amount: totalAmount,
+      commission: commission,
       status: 'received',
-      orderDate: new Date().toISOString()
+      orderDate: new Date().toISOString(),
+      resellerId: 'reseller_001', // Default assigned reseller
+      resellerName: 'Fakhrul Mustaqim (KTF)'
     };
 
     // Create delivery tracking record
@@ -146,9 +139,9 @@ class AppStore {
       trackingId,
       orderId,
       status: 'received',
-      estimatedTime: new Date(Date.now() + 35 * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-      driverName: 'Marcus Vance',
-      driverPhone: '+1 (555) 019-3382',
+      estimatedTime: new Date(Date.now() + 30 * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      driverName: 'Muhammad Harith',
+      driverPhone: '+60 18-923 8847',
       details: addressDetails
     };
 
@@ -237,5 +230,4 @@ function randomId(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export const store = new AppStore();
-window.store = store; // For console debugging if necessary
+window.store = new AppStore();

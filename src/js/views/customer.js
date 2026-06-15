@@ -1,11 +1,5 @@
 // customer.js - View controller for Customer screens
 
-import { store } from '../store.js';
-import { dataLoader } from '../data-loader.js';
-import { renderMealCard, renderCategoryChips, renderRatingStars } from '../components/cards.js';
-import { renderPagination } from '../components/table.js';
-import { renderTrackingStepper, renderMockMap } from '../components/tracking.js';
-
 // Local catalog state
 let catalogFilters = {
   search: '',
@@ -17,78 +11,180 @@ let catalogFilters = {
 
 let trackOrderResult = null;
 
-export const customerViews = {
+// Dumpling customizer state
+let plannerState = {
+  chicken: 4,
+  beef: 4,
+  veg: 4
+};
+
+window.customerViews = {
   // Render Customer Home View
   renderHome(container) {
     // Select popular meals (top 4 rated)
-    const featuredMeals = [...store.state.meals]
+    const featuredMeals = [...window.store.state.meals]
       .sort((a, b) => b.rating - a.rating)
       .slice(0, 4);
 
     // Categories list
-    const categories = ['All', 'Starters', 'Mains', 'Seafood', 'Vegetarian', 'Desserts', 'Beverages'];
+    const categories = ['All', 'Chicken', 'Beef', 'Vegetarian', 'Signature Mix'];
 
     // Select recent orders for quick reorder
-    const recentOrders = store.state.orders.slice(0, 3).map(o => {
-      const meal = store.state.meals.find(m => m.mealId === o.mealId);
+    const recentOrders = window.store.state.orders.slice(0, 3).map(o => {
+      const meal = window.store.state.meals.find(m => m.mealId === o.mealId);
       return { ...o, meal };
     });
 
     container.innerHTML = `
       <!-- Hero Banner -->
       <section class="relative bg-primary rounded-[2rem] overflow-hidden mb-12 p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8 shadow-premium text-white">
+        <!-- White Crescent Decorative Motif in Background -->
+        <div class="absolute -right-10 -bottom-10 w-80 h-80 bg-white/5 rounded-full pointer-events-none z-0"></div>
+        <div class="absolute right-10 top-10 w-24 h-24 border-4 border-white/5 rounded-full pointer-events-none z-0"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-primary-dark/80 to-transparent z-0"></div>
         
         <div class="max-w-xl relative z-10 space-y-5">
-          <span class="text-accent bg-accent/15 border border-accent/20 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">Gourmet Delivery</span>
-          <h1 class="font-display text-4xl md:text-5xl lg:text-6xl text-white font-extrabold leading-tight">
-            Exquisite Hot Meals, Delivered to <span class="text-accent">Your Door</span>
+          <div class="flex items-center gap-2">
+            <span class="text-accent bg-accent/15 border border-accent/20 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">好米巴 · Chinese Muslim</span>
+            <span class="text-white bg-white/10 px-3 py-1.5 rounded-full text-xs font-semibold">KTF Alumni UTM</span>
+          </div>
+          <h1 class="font-display text-3xl md:text-4xl lg:text-5xl text-white font-extrabold leading-tight">
+            Hand-Folded Frozen Dumplings <span class="text-accent">Delivered to Campus</span>
           </h1>
           <p class="text-secondary-light text-sm md:text-base leading-relaxed">
-            Experience premium restaurant culinary creations, curated fresh daily and delivered hot under 35 minutes.
+            Order premium Chinese Muslim frozen dumplings prepared by Hot Meal Bar at KTF Alumni Area. Support student resellers and get them shipped directly to your hostel block!
           </p>
           <div class="flex flex-wrap gap-4 pt-2">
             <button onclick="window.app.switchView('catalog')" class="bg-accent hover:bg-accent-dark text-white font-semibold px-7 py-3.5 rounded-2xl shadow-accent-glow hover:shadow-none transition-all cursor-pointer active:scale-95 text-sm">
-              Explore Catalog
+              Order Dumplings Now
             </button>
-            <button onclick="window.app.switchView('catalog'); window.app.setCatalogCategory('Seafood');" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold px-7 py-3.5 rounded-2xl transition-all cursor-pointer active:scale-95 text-sm">
-              View Seafood
+            <button onclick="window.app.switchView('apply')" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold px-7 py-3.5 rounded-2xl transition-all cursor-pointer active:scale-95 text-sm">
+              Become a Reseller
             </button>
           </div>
         </div>
         
-        <!-- Hero Image Mock -->
-        <div class="relative z-10 w-full max-w-xs lg:max-w-md aspect-square rounded-full border-[8px] border-white/5 overflow-hidden shadow-2xl">
-          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop&q=80" alt="Premium Meal Platter" class="w-full h-full object-cover"/>
+        <!-- Hero Image (Sponsor Logo beautifully displayed in premium circular tray) -->
+        <div class="relative z-10 w-full max-w-[240px] md:max-w-[280px] aspect-square rounded-[2rem] border-[6px] border-white/10 overflow-hidden shadow-2xl bg-white flex items-center justify-center p-4">
+          <img src="assets/sponsor/logo.jpeg" alt="Hot Meal Bar Logo" class="w-full h-full object-contain rounded-2xl" onerror="this.src='https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500'"/>
+        </div>
+      </section>
+
+      <!-- Signature Visual Design Element: Bamboo Steamer Plate Planner -->
+      <section class="mb-12 bg-white rounded-[2rem] p-6 md:p-10 border border-secondary/10 shadow-premium">
+        <div class="flex flex-col lg:flex-row gap-8 items-center">
+          <div class="w-full lg:w-1/2 space-y-4">
+            <span class="text-xs font-bold text-accent uppercase tracking-wider">Interactive Customizer</span>
+            <h2 class="text-2xl font-bold font-display text-primary">Build Your Dumpling Steamer</h2>
+            <p class="text-xs text-secondary-light leading-relaxed">
+              Design a custom assortment of 12 hand-folded dumplings. Tap the selectors below to adjust counts. Fill up all 12 slots to add your personalized mix to the cart!
+            </p>
+            
+            <div class="space-y-4 pt-2">
+              <!-- Chicken Dumplings -->
+              <div class="flex items-center justify-between p-3.5 bg-background rounded-2xl border border-secondary/5">
+                <div>
+                  <h4 class="font-display font-semibold text-xs text-primary">Chicken & Mushroom</h4>
+                  <span class="text-[10px] text-secondary-light">Juicy & Fragrant</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <button onclick="window.app.updatePlannerQty('chicken', -1)" class="w-7 h-7 bg-white border border-secondary/15 rounded-lg text-primary hover:bg-background-dark flex items-center justify-center cursor-pointer text-sm font-bold active:scale-90">-</button>
+                  <span id="planner-chicken-qty" class="text-xs font-bold text-primary w-4 text-center">4</span>
+                  <button onclick="window.app.updatePlannerQty('chicken', 1)" class="w-7 h-7 bg-white border border-secondary/15 rounded-lg text-primary hover:bg-background-dark flex items-center justify-center cursor-pointer text-sm font-bold active:scale-90">+</button>
+                </div>
+              </div>
+
+              <!-- Beef Dumplings -->
+              <div class="flex items-center justify-between p-3.5 bg-background rounded-2xl border border-secondary/5">
+                <div>
+                  <h4 class="font-display font-semibold text-xs text-primary">Savory Cumin Beef</h4>
+                  <span class="text-[10px] text-secondary-light">Rich & Spiced</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <button onclick="window.app.updatePlannerQty('beef', -1)" class="w-7 h-7 bg-white border border-secondary/15 rounded-lg text-primary hover:bg-background-dark flex items-center justify-center cursor-pointer text-sm font-bold active:scale-90">-</button>
+                  <span id="planner-beef-qty" class="text-xs font-bold text-primary w-4 text-center">4</span>
+                  <button onclick="window.app.updatePlannerQty('beef', 1)" class="w-7 h-7 bg-white border border-secondary/15 rounded-lg text-primary hover:bg-background-dark flex items-center justify-center cursor-pointer text-sm font-bold active:scale-90">+</button>
+                </div>
+              </div>
+
+              <!-- Veg Dumplings -->
+              <div class="flex items-center justify-between p-3.5 bg-background rounded-2xl border border-secondary/5">
+                <div>
+                  <h4 class="font-display font-semibold text-xs text-primary">Chives & Eggs</h4>
+                  <span class="text-[10px] text-secondary-light">Traditional Vegetarian</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <button onclick="window.app.updatePlannerQty('veg', -1)" class="w-7 h-7 bg-white border border-secondary/15 rounded-lg text-primary hover:bg-background-dark flex items-center justify-center cursor-pointer text-sm font-bold active:scale-90">-</button>
+                  <span id="planner-veg-qty" class="text-xs font-bold text-primary w-4 text-center">4</span>
+                  <button onclick="window.app.updatePlannerQty('veg', 1)" class="w-7 h-7 bg-white border border-secondary/15 rounded-lg text-primary hover:bg-background-dark flex items-center justify-center cursor-pointer text-sm font-bold active:scale-90">+</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Price and Cart Action -->
+            <div class="flex items-center justify-between pt-4 border-t border-secondary/5">
+              <div>
+                <span class="text-[10px] text-secondary-light block">Custom Price</span>
+                <span class="text-xl font-extrabold text-primary block font-display">RM 16.50</span>
+              </div>
+              <button 
+                id="add-custom-steamer-btn"
+                onclick="window.app.addCustomSteamerToCart()" 
+                class="bg-accent hover:bg-accent-dark text-white font-semibold text-xs px-6 py-3.5 rounded-2xl shadow-accent-glow hover:shadow-none transition-all cursor-pointer active:scale-95 flex items-center gap-2"
+              >
+                Add Custom Steamer
+              </button>
+            </div>
+          </div>
+          
+          <!-- Steamer Visual Display -->
+          <div class="w-full lg:w-1/2 flex items-center justify-center">
+            <div class="relative w-72 h-72 rounded-full bg-[#D4C3A3] border-8 border-[#BFA781] shadow-lg flex items-center justify-center overflow-hidden">
+              <!-- Bamboo texture background -->
+              <div class="absolute inset-2 rounded-full border-4 border-[#A3885F] bg-[#E5D7BE] flex items-center justify-center opacity-90"></div>
+              
+              <!-- Bamboo weave lines -->
+              <div class="absolute inset-0 border-t border-black/5 rotate-12 pointer-events-none"></div>
+              <div class="absolute inset-0 border-t border-black/5 rotate-45 pointer-events-none"></div>
+              <div class="absolute inset-0 border-t border-black/5 -rotate-45 pointer-events-none"></div>
+
+              <!-- Dumplings Grid inside Steamer -->
+              <div id="steamer-slots" class="relative z-10 w-56 h-56 rounded-full grid grid-cols-4 gap-3 p-4 items-center justify-center">
+                <!-- Rendered Dynamically -->
+              </div>
+              
+              <div class="absolute bottom-2 text-[10px] font-bold text-[#8A6A3A] bg-[#F4ECD8]/80 px-2 py-0.5 rounded-full border border-[#D4C3A3] z-20">12 PCS BASKET</div>
+            </div>
+          </div>
         </div>
       </section>
 
       <!-- Category quick selection -->
       <section class="mb-12">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold font-display text-primary">Browse Categories</h2>
+          <h2 class="text-2xl font-bold font-display text-primary">Explore Dumpling Categories</h2>
           <button onclick="window.app.switchView('catalog')" class="text-sm font-semibold text-accent hover:text-accent-dark flex items-center gap-1 cursor-pointer">
             View All
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
           </button>
         </div>
         <div class="flex gap-3 overflow-x-auto pb-3 -mx-4 px-4 scroll-smooth no-scrollbar">
-          ${renderCategoryChips(categories, 'All', 'setCatalogCategory')}
+          ${window.renderCategoryChips(categories, 'All', 'setCatalogCategory')}
         </div>
       </section>
 
       <!-- Featured Meals grid -->
       <section class="mb-12">
-        <h2 class="text-2xl font-bold font-display text-primary mb-6">Trending Culinary Creations</h2>
+        <h2 class="text-2xl font-bold font-display text-primary mb-6">Popular Frozen Dumplings</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          ${featuredMeals.map(meal => renderMealCard(meal)).join('')}
+          ${featuredMeals.map(meal => window.renderMealCard(meal)).join('')}
         </div>
       </section>
 
       <!-- Quick Reorder Panel for returnees -->
-      <section class="glass-card rounded-[2rem] p-8 border border-secondary/5">
+      <section class="glass-card rounded-[2rem] p-8 border border-secondary/15">
         <h3 class="font-display text-xl font-bold text-primary mb-2">Fast Reorder</h3>
-        <p class="text-xs text-secondary-light mb-6">Reorder one of your recently ordered hot meals in one single tap.</p>
+        <p class="text-xs text-secondary-light mb-6">Instantly reorder your favorite dumpling packs from previous campus purchases.</p>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           ${recentOrders.map(order => {
@@ -98,8 +194,8 @@ export const customerViews = {
                 <div class="flex items-center gap-3">
                   <img src="${order.meal.image}" alt="${order.meal.mealName}" class="w-12 h-12 rounded-xl object-cover border border-secondary/10" />
                   <div>
-                    <h4 class="font-display font-semibold text-sm text-primary line-clamp-1">${order.meal.mealName}</h4>
-                    <span class="text-xs text-secondary-light">$${order.meal.price.toFixed(2)}</span>
+                    <h4 class="font-display font-semibold text-xs text-primary line-clamp-1">${order.meal.mealName}</h4>
+                    <span class="text-xs text-secondary-light">RM ${order.meal.price.toFixed(2)}</span>
                   </div>
                 </div>
                 <button 
@@ -117,20 +213,127 @@ export const customerViews = {
         </div>
       </section>
     `;
+
+    this.renderSteamerVisual();
+  },
+
+  // Update Dumpling Planner quantity
+  updatePlannerQty(type, change) {
+    const total = plannerState.chicken + plannerState.beef + plannerState.veg;
+    
+    if (change > 0 && total >= 12) {
+      window.app.showFloatingAlert("Steamer is full! Only 12 dumplings per basket.", "info");
+      return;
+    }
+    
+    if (plannerState[type] + change < 0) return;
+
+    plannerState[type] += change;
+    
+    // Update quantities in DOM
+    document.getElementById(`planner-${type}-qty`).textContent = plannerState[type];
+    
+    // Rerender visual slots
+    this.renderSteamerVisual();
+  },
+
+  // Render Steamer graphics
+  renderSteamerVisual() {
+    const slotsContainer = document.getElementById('steamer-slots');
+    if (!slotsContainer) return;
+
+    slotsContainer.innerHTML = '';
+    
+    const colors = {
+      chicken: 'bg-[#F2D7B4] border-[#D1B187]', // Creamy yellow
+      beef: 'bg-[#C58B70] border-[#9E654C]',    // Light brown
+      veg: 'bg-[#C2E3C4] border-[#8FB892]'      // Light green
+    };
+
+    const dumplingItems = [];
+    for (let i = 0; i < plannerState.chicken; i++) dumplingItems.push('chicken');
+    for (let i = 0; i < plannerState.beef; i++) dumplingItems.push('beef');
+    for (let i = 0; i < plannerState.veg; i++) dumplingItems.push('veg');
+
+    // Fill remaining empty slots up to 12
+    const totalCount = dumplingItems.length;
+
+    for (let i = 0; i < 12; i++) {
+      const type = dumplingItems[i];
+      if (type) {
+        slotsContainer.innerHTML += `
+          <div class="w-10 h-8 rounded-t-full rounded-b-2xl border-2 shadow-sm flex items-center justify-center text-[8px] font-bold text-black/50 ${colors[type]} animate-slide-up transform hover:scale-110 transition-transform cursor-pointer" title="${type} Dumpling">
+            🥟
+          </div>
+        `;
+      } else {
+        slotsContainer.innerHTML += `
+          <div class="w-10 h-8 rounded-full border border-dashed border-black/10 flex items-center justify-center text-[8px] font-bold text-black/10">
+            +
+          </div>
+        `;
+      }
+    }
+
+    const addBtn = document.getElementById('add-custom-steamer-btn');
+    if (addBtn) {
+      if (totalCount === 12) {
+        addBtn.disabled = false;
+        addBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      } else {
+        addBtn.disabled = true;
+        addBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+    }
+  },
+
+  // Add customized mix to in-memory cart
+  addCustomSteamerToCart() {
+    const total = plannerState.chicken + plannerState.beef + plannerState.veg;
+    if (total !== 12) {
+      window.app.showFloatingAlert("Please select exactly 12 dumplings to complete your basket.", "info");
+      return;
+    }
+
+    // Generate unique custom item
+    const customMealId = `custom_meal_${Date.now()}`;
+    const customMeal = {
+      mealId: customMealId,
+      mealName: `Custom Steamer Basket (${plannerState.chicken} Chicken, ${plannerState.beef} Beef, ${plannerState.veg} Veg)`,
+      chineseName: "自选水饺蒸笼",
+      category: "Signature Mix",
+      price: 16.50,
+      rating: 5.0,
+      image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500",
+      description: `Your custom hand-folded dumpling collection. Includes ${plannerState.chicken} Chicken & Mushroom, ${plannerState.beef} Savory Beef, and ${plannerState.veg} Chives & Eggs.`,
+      ingredients: ["Custom Selection"]
+    };
+
+    // Push into store meals temporarily
+    window.store.state.meals.push(customMeal);
+    
+    // Add to cart
+    window.store.addToCart(customMealId, 1);
+    window.app.openCartDrawer();
+    window.app.showFloatingAlert("Custom Steamer added to cart!", "success");
+    
+    // Reset planner
+    plannerState = { chicken: 4, beef: 4, veg: 4 };
+    this.renderHome(document.getElementById('view-container'));
   },
 
   // Render Meals Catalog View (Search, Sort, Filters, and Paginated list)
   renderCatalog(container) {
-    const categories = ['All', 'Starters', 'Mains', 'Seafood', 'Vegetarian', 'Desserts', 'Beverages'];
+    const categories = ['All', 'Chicken', 'Beef', 'Vegetarian', 'Signature Mix'];
     
     // Fetch query results
-    const results = dataLoader.queryMeals(catalogFilters);
+    const results = window.dataLoader.queryMeals(catalogFilters);
 
     container.innerHTML = `
       <div class="flex flex-col lg:flex-row gap-8">
-        <!-- Sidebar Filters (desktop persistent, mobile collapsible under drawer) -->
+        <!-- Sidebar Filters -->
         <aside class="w-full lg:w-64 flex-shrink-0 space-y-6">
-          <div class="glass-card rounded-[2rem] p-6 border border-secondary/5 space-y-6">
+          <div class="glass-card rounded-[2rem] p-6 border border-secondary/15 space-y-6">
             <div>
               <h3 class="font-display font-bold text-lg text-primary mb-4">Refine Catalog</h3>
               
@@ -141,7 +344,7 @@ export const customerViews = {
                   id="catalogSearch"
                   value="${catalogFilters.search}" 
                   oninput="window.app.catalogSearch(this.value)"
-                  placeholder="Search meals..."
+                  placeholder="Search dumplings..."
                   class="w-full pl-10 pr-4 py-2.5 bg-background border border-secondary/10 rounded-xl focus:outline-none focus:border-accent text-sm"
                 />
                 <svg class="w-4 h-4 text-secondary/40 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -186,21 +389,21 @@ export const customerViews = {
         <!-- Main Catalog Results Container -->
         <main class="flex-grow">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold font-display text-primary">Explore Menu</h2>
-            <span class="text-xs text-secondary-light">${results.total} Gourmet dishes available</span>
+            <h2 class="text-2xl font-bold font-display text-primary">Explore Dumpling Menu</h2>
+            <span class="text-xs text-secondary-light">${results.total} Packs available</span>
           </div>
 
           <!-- Meals Grid -->
           ${results.items.length === 0 ? `
             <div class="glass-card rounded-[2rem] p-12 text-center text-secondary border border-secondary/5 mt-4">
               <svg class="w-12 h-12 mx-auto mb-4 text-secondary/35" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-              No meals matching your criteria. Try adjusting your filters.
+              No dumplings matching your criteria. Try adjusting your filters.
             </div>
           ` : `
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              ${results.items.map(meal => renderMealCard(meal)).join('')}
+              ${results.items.map(meal => window.renderMealCard(meal)).join('')}
             </div>
-            ${renderPagination(results.page, results.totalPages, 'catalogPage')}
+            ${window.renderPagination(results.page, results.totalPages, 'catalogPage')}
           `}
         </main>
       </div>
@@ -236,17 +439,17 @@ export const customerViews = {
 
   refreshCatalog() {
     const container = document.getElementById('view-container');
-    if (store.state.activeView === 'catalog' && container) {
+    if (window.store.state.activeView === 'catalog' && container) {
       this.renderCatalog(container);
     }
   },
 
   // Render Meal Details Modal content
   renderMealDetails(mealId) {
-    const meal = store.state.meals.find(m => m.mealId === mealId);
+    const meal = window.store.state.meals.find(m => m.mealId === mealId);
     if (!meal) return '';
     
-    const reviews = dataLoader.getMealRatings(mealId);
+    const reviews = window.dataLoader.getMealRatings(mealId);
 
     return `
       <div class="relative bg-white rounded-3xl max-w-4xl w-full mx-4 overflow-hidden border border-secondary/10 shadow-2xl flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh] animate-slide-up">
@@ -276,9 +479,10 @@ export const customerViews = {
             <div>
               <span class="text-xs font-semibold text-accent uppercase tracking-wider">${meal.category}</span>
               <h2 class="font-display text-2xl font-bold text-primary mt-1">${meal.mealName}</h2>
+              <p class="text-sm font-semibold text-secondary-light font-display mt-0.5">${meal.chineseName || ''}</p>
               
               <div class="flex items-center gap-2 mt-2">
-                <div class="flex text-accent">${renderRatingStars(meal.rating)}</div>
+                <div class="flex text-accent">${window.renderRatingStars(meal.rating)}</div>
                 <span class="text-xs font-semibold text-primary">${meal.rating.toFixed(1)}</span>
                 <span class="text-xs text-secondary-light">(${reviews.length} reviews)</span>
               </div>
@@ -302,11 +506,11 @@ export const customerViews = {
             <div class="flex items-center gap-4 py-3 border-y border-secondary/5 text-xs text-secondary-light">
               <span class="flex items-center gap-1">
                 <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Prep: ${meal.prepTime} mins
+                Cooking: ${meal.prepTime} mins
               </span>
               <span class="flex items-center gap-1">
                 <svg class="w-4 h-4 text-success" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/></svg>
-                Fresh Gourmet
+                Chinese Muslim (好米巴)
               </span>
             </div>
 
@@ -319,7 +523,7 @@ export const customerViews = {
                     <div class="bg-background/50 border border-secondary/5 rounded-xl p-3 space-y-1">
                       <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-primary font-display">${rev.customerName}</span>
-                        <div class="flex text-accent">${renderRatingStars(rev.rating)}</div>
+                        <div class="flex text-accent">${window.renderRatingStars(rev.rating)}</div>
                       </div>
                       <p class="text-[11px] text-charcoal-light italic leading-relaxed">"${rev.review}"</p>
                     </div>
@@ -332,8 +536,8 @@ export const customerViews = {
           <!-- Checkout / Action footer -->
           <div class="flex items-center justify-between border-t border-secondary/5 pt-4 mt-6">
             <div>
-              <span class="text-xs text-secondary-light">Unit Price</span>
-              <span class="text-xl font-extrabold text-primary block font-display">$${meal.price.toFixed(2)}</span>
+              <span class="text-xs text-secondary-light">Pack Price</span>
+              <span class="text-xl font-extrabold text-primary block font-display">RM ${meal.price.toFixed(2)}</span>
             </div>
             <button 
               onclick="window.app.addToCart('${meal.mealId}'); window.app.closeMealDetails();"
@@ -355,14 +559,14 @@ export const customerViews = {
     const footerContainer = document.getElementById('cart-drawer-footer');
     if (!drawerContainer || !footerContainer) return;
 
-    const cart = store.state.cart;
+    const cart = window.store.state.cart;
     
     if (cart.length === 0) {
       drawerContainer.innerHTML = `
         <div class="py-24 text-center text-secondary">
           <svg class="w-16 h-16 mx-auto mb-4 text-secondary/20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
           <p class="font-display font-semibold text-primary mb-1">Your cart is empty</p>
-          <p class="text-xs text-secondary-light">Explore our catalog and add hot meals.</p>
+          <p class="text-xs text-secondary-light">Explore our dumpling catalog and support resellers.</p>
         </div>
       `;
       footerContainer.innerHTML = `
@@ -370,7 +574,7 @@ export const customerViews = {
           onclick="window.app.closeCartDrawer(); window.app.switchView('catalog');" 
           class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3.5 rounded-2xl transition-all cursor-pointer text-sm"
         >
-          Browse Meals
+          Browse Dumplings
         </button>
       `;
       return;
@@ -378,14 +582,14 @@ export const customerViews = {
 
     // Load Cart Item Cards
     drawerContainer.innerHTML = cart.map(item => {
-      const meal = store.state.meals.find(m => m.mealId === item.mealId);
+      const meal = window.store.state.meals.find(m => m.mealId === item.mealId);
       if (!meal) return '';
       return `
         <div class="flex items-center gap-4 p-3.5 bg-background rounded-2xl border border-secondary/5">
           <img src="${meal.image}" alt="${meal.mealName}" class="w-16 h-16 rounded-xl object-cover border border-secondary/10" />
           <div class="flex-grow min-w-0">
             <h4 class="font-display font-semibold text-sm text-primary truncate">${meal.mealName}</h4>
-            <span class="text-xs text-secondary-light block mb-2">$${meal.price.toFixed(2)}</span>
+            <span class="text-xs text-secondary-light block mb-2">RM ${meal.price.toFixed(2)}</span>
             
             <!-- Adjust Qty -->
             <div class="flex items-center gap-3">
@@ -418,23 +622,23 @@ export const customerViews = {
     }).join('');
 
     // Load Footer calculations
-    const subtotal = store.getCartTotal();
-    const deliveryFee = 3.99;
+    const subtotal = window.store.getCartTotal();
+    const deliveryFee = 2.00; // Flat RM 2.00 delivery on campus
     const total = subtotal + deliveryFee;
 
     footerContainer.innerHTML = `
       <div class="space-y-2.5 mb-6 text-xs">
         <div class="flex items-center justify-between text-secondary-light">
           <span>Subtotal</span>
-          <span>$${subtotal.toFixed(2)}</span>
+          <span>RM ${subtotal.toFixed(2)}</span>
         </div>
         <div class="flex items-center justify-between text-secondary-light">
-          <span>Delivery Fee</span>
-          <span>$${deliveryFee.toFixed(2)}</span>
+          <span>Campus Delivery Fee</span>
+          <span>RM ${deliveryFee.toFixed(2)}</span>
         </div>
         <div class="flex items-center justify-between text-sm font-bold text-primary pt-2.5 border-t border-secondary/10">
           <span>Total Price</span>
-          <span class="font-display">$${total.toFixed(2)}</span>
+          <span class="font-display">RM ${total.toFixed(2)}</span>
         </div>
       </div>
       <button 
@@ -448,7 +652,7 @@ export const customerViews = {
 
   // Render Checkout view layout
   renderCheckout(container) {
-    const cart = store.state.cart;
+    const cart = window.store.state.cart;
     if (cart.length === 0) {
       container.innerHTML = `
         <div class="glass-card rounded-[2rem] p-12 text-center text-secondary border border-secondary/5 mt-4">
@@ -460,15 +664,15 @@ export const customerViews = {
       return;
     }
 
-    const subtotal = store.getCartTotal();
-    const deliveryFee = 3.99;
+    const subtotal = window.store.getCartTotal();
+    const deliveryFee = 2.00;
     const total = subtotal + deliveryFee;
 
     container.innerHTML = `
       <div class="flex flex-col lg:flex-row gap-8">
         <!-- Delivery forms pane -->
         <main class="flex-grow">
-          <div class="glass-card rounded-[2rem] p-6 md:p-8 border border-secondary/5 space-y-6">
+          <div class="glass-card rounded-[2rem] p-6 md:p-8 border border-secondary/15 space-y-6">
             <h2 class="font-display text-2xl font-bold text-primary border-b border-secondary/5 pb-4">Delivery Details</h2>
             
             <form id="checkoutForm" onsubmit="event.preventDefault(); window.app.submitCheckout(new FormData(this))" class="space-y-4">
@@ -476,18 +680,18 @@ export const customerViews = {
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="space-y-1">
                   <label class="text-xs font-semibold text-secondary-light block">Name</label>
-                  <input type="text" name="name" required placeholder="Evelyn Sterling" class="form-input-premium text-sm py-2.5" />
+                  <input type="text" name="name" required placeholder="Ahmad Farhan" class="form-input-premium text-sm py-2.5" />
                 </div>
                 <div class="space-y-1">
                   <label class="text-xs font-semibold text-secondary-light block">Phone Number</label>
-                  <input type="tel" name="phone" required placeholder="+1 (555) 019-2834" class="form-input-premium text-sm py-2.5" />
+                  <input type="tel" name="phone" required placeholder="+60 12-345 6789" class="form-input-premium text-sm py-2.5" />
                 </div>
               </div>
 
               <!-- Address -->
               <div class="space-y-1">
-                <label class="text-xs font-semibold text-secondary-light block">Delivery Address</label>
-                <input type="text" name="address" required placeholder="Apt 4B, 742 Evergreen Terrace, Metropolis" class="form-input-premium text-sm py-2.5" />
+                <label class="text-xs font-semibold text-secondary-light block">Hostel Block / Room Number (UTM JB)</label>
+                <input type="text" name="address" required placeholder="KTF Block M02, Room 304, Universiti Teknologi Malaysia" class="form-input-premium text-sm py-2.5" />
               </div>
 
               <!-- Payment Method selection -->
@@ -495,12 +699,12 @@ export const customerViews = {
                 <h3 class="font-display font-semibold text-sm text-primary mb-3">Payment Method</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <label class="flex items-center gap-3 p-4 bg-background border border-secondary/15 rounded-2xl cursor-pointer hover:border-accent/40 transition-colors">
-                    <input type="radio" name="payment" value="card" checked class="accent-accent" />
-                    <span class="text-sm font-medium text-primary font-display">Credit / Debit Card</span>
+                    <input type="radio" name="payment" value="wallet" checked class="accent-accent" />
+                    <span class="text-sm font-medium text-primary font-display">DuitNow QR / E-Wallet</span>
                   </label>
                   <label class="flex items-center gap-3 p-4 bg-background border border-secondary/15 rounded-2xl cursor-pointer hover:border-accent/40 transition-colors">
-                    <input type="radio" name="payment" value="wallet" class="accent-accent" />
-                    <span class="text-sm font-medium text-primary font-display">Digital Wallet</span>
+                    <input type="radio" name="payment" value="fpx" class="accent-accent" />
+                    <span class="text-sm font-medium text-primary font-display">FPX Online Banking</span>
                   </label>
                   <label class="flex items-center gap-3 p-4 bg-background border border-secondary/15 rounded-2xl cursor-pointer hover:border-accent/40 transition-colors">
                     <input type="radio" name="payment" value="cash" class="accent-accent" />
@@ -515,7 +719,7 @@ export const customerViews = {
                   Cancel
                 </button>
                 <button type="submit" class="px-8 py-3 bg-accent hover:bg-accent-dark text-white font-semibold rounded-2xl shadow-accent-glow hover:shadow-none transition-all cursor-pointer text-sm">
-                  Place Order ($${total.toFixed(2)})
+                  Place Order (RM ${total.toFixed(2)})
                 </button>
               </div>
             </form>
@@ -524,13 +728,13 @@ export const customerViews = {
 
         <!-- Right Summary side pane -->
         <aside class="w-full lg:w-96 flex-shrink-0">
-          <div class="glass-card rounded-[2rem] p-6 border border-secondary/5 space-y-6">
+          <div class="glass-card rounded-[2rem] p-6 border border-secondary/15 space-y-6">
             <h3 class="font-display font-bold text-lg text-primary border-b border-secondary/5 pb-4">Order Summary</h3>
             
             <!-- Items list -->
             <div class="space-y-4 max-h-[240px] overflow-y-auto pr-1">
               ${cart.map(item => {
-                const meal = store.state.meals.find(m => m.mealId === item.mealId);
+                const meal = window.store.state.meals.find(m => m.mealId === item.mealId);
                 if (!meal) return '';
                 return `
                   <div class="flex items-center justify-between text-xs">
@@ -541,7 +745,7 @@ export const customerViews = {
                         <span class="text-secondary-light">Qty: ${item.quantity}</span>
                       </div>
                     </div>
-                    <span class="font-semibold text-primary font-display">$${(meal.price * item.quantity).toFixed(2)}</span>
+                    <span class="font-semibold text-primary font-display">RM ${(meal.price * item.quantity).toFixed(2)}</span>
                   </div>
                 `;
               }).join('')}
@@ -551,15 +755,15 @@ export const customerViews = {
             <div class="space-y-2 border-t border-secondary/5 pt-4 text-xs">
               <div class="flex items-center justify-between text-secondary-light">
                 <span>Subtotal</span>
-                <span>$${subtotal.toFixed(2)}</span>
+                <span>RM ${subtotal.toFixed(2)}</span>
               </div>
               <div class="flex items-center justify-between text-secondary-light">
-                <span>Delivery Fee</span>
-                <span>$${deliveryFee.toFixed(2)}</span>
+                <span>Campus Delivery</span>
+                <span>RM ${deliveryFee.toFixed(2)}</span>
               </div>
               <div class="flex items-center justify-between text-sm font-bold text-primary pt-2.5 border-t border-secondary/10">
                 <span>Total Amount</span>
-                <span class="font-display">$${total.toFixed(2)}</span>
+                <span class="font-display">RM ${total.toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -574,12 +778,12 @@ export const customerViews = {
     const name = formData.get('name');
     const phone = formData.get('phone');
     
-    store.placeOrder({ address, name, phone });
+    window.store.placeOrder({ address, name, phone });
   },
 
   // Render Live Order Tracking page
   renderTracking(container) {
-    const activeOrder = store.state.activeOrder;
+    const activeOrder = window.store.state.activeOrder;
     
     if (!activeOrder) {
       container.innerHTML = `
@@ -592,18 +796,18 @@ export const customerViews = {
       return;
     }
 
-    const tracking = store.state.delivery.find(d => d.orderId === activeOrder.orderId);
-    const meal = store.state.meals.find(m => m.mealId === activeOrder.mealId);
+    const tracking = window.store.state.delivery.find(d => d.orderId === activeOrder.orderId);
+    const meal = window.store.state.meals.find(m => m.mealId === activeOrder.mealId);
 
     container.innerHTML = `
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Timeline and steps -->
         <main class="lg:col-span-2 space-y-6">
-          <div class="glass-card rounded-[2rem] p-6 md:p-8 border border-secondary/5 space-y-8">
+          <div class="glass-card rounded-[2rem] p-6 md:p-8 border border-secondary/15 space-y-8">
             <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-secondary/5 pb-5 gap-3">
               <div>
                 <span class="text-[10px] text-accent font-semibold uppercase tracking-wider">Live tracking</span>
-                <h2 class="font-display text-2xl font-bold text-primary mt-0.5">Order #${activeOrder.orderId.substring(4) || activeOrder.orderId}</h2>
+                <h2 class="font-display text-2xl font-bold text-primary mt-0.5">Order #${activeOrder.orderId}</h2>
               </div>
               <div class="text-left md:text-right">
                 <span class="text-xs text-secondary-light block">Est. Arrival Time</span>
@@ -612,30 +816,30 @@ export const customerViews = {
             </div>
 
             <!-- Horizontal Stepper -->
-            ${renderTrackingStepper(activeOrder.status)}
+            ${window.renderTrackingStepper(activeOrder.status)}
 
             <!-- Map Mock -->
-            ${renderMockMap(activeOrder.status)}
+            ${window.renderMockMap(activeOrder.status)}
           </div>
         </main>
 
-        <!-- Right detail card panel (driver, ratings if arrived) -->
+        <!-- Right detail card panel -->
         <aside class="space-y-6">
           <!-- Order summary -->
-          <div class="glass-card rounded-[2rem] p-6 border border-secondary/5 space-y-5">
+          <div class="glass-card rounded-[2rem] p-6 border border-secondary/15 space-y-5">
             <h3 class="font-display font-bold text-lg text-primary border-b border-secondary/5 pb-4">Delivery Address</h3>
             <div class="text-xs text-charcoal space-y-2 leading-relaxed">
-              <p><strong class="text-primary">Recurrent:</strong> ${tracking && tracking.details ? tracking.details.name : 'Evelyn Sterling'}</p>
-              <p><strong class="text-primary">Contact:</strong> ${tracking && tracking.details ? tracking.details.phone : '+1 (555) 019-2834'}</p>
-              <p><strong class="text-primary">Address:</strong> ${tracking && tracking.details ? tracking.details.address : 'Apt 4B, 742 Evergreen Terrace, Metropolis'}</p>
+              <p><strong class="text-primary">Recipient:</strong> ${tracking && tracking.details ? tracking.details.name : 'Ahmad Farhan'}</p>
+              <p><strong class="text-primary">Contact:</strong> ${tracking && tracking.details ? tracking.details.phone : '+60 12-738 9201'}</p>
+              <p><strong class="text-primary">Address:</strong> ${tracking && tracking.details ? tracking.details.address : 'KTF Block M02, Room 304, UTM JB'}</p>
             </div>
           </div>
 
-          <!-- Add Review Form (Activated ONLY when order status === 'delivered') -->
+          <!-- Add Review Form -->
           ${activeOrder.status === 'delivered' ? `
             <div class="glass-card rounded-[2rem] p-6 border border-success/20 bg-success/5 animate-slide-up space-y-4">
               <div>
-                <h4 class="font-display font-bold text-base text-primary">Enjoyed your ${meal ? meal.mealName : 'meal'}?</h4>
+                <h4 class="font-display font-bold text-base text-primary">Enjoyed your ${meal ? meal.mealName : 'dumplings'}?</h4>
                 <p class="text-[11px] text-secondary-light mt-0.5">Please share your experience with us.</p>
               </div>
 
@@ -667,15 +871,15 @@ export const customerViews = {
               </form>
             </div>
           ` : `
-            <div class="glass-card rounded-[2rem] p-6 border border-secondary/5 text-center py-8">
+            <div class="glass-card rounded-[2rem] p-6 border border-secondary/15 text-center py-8">
               <div class="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center text-accent mx-auto mb-3">
                 <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
               </div>
-              <h4 class="font-display font-semibold text-sm text-primary mb-1">Cooking & Preparation</h4>
-              <p class="text-[10px] text-secondary-light">Review submittal unlocks automatically upon delivery confirmation.</p>
+              <h4 class="font-display font-semibold text-sm text-primary mb-1">Preparing & Shipping</h4>
+              <p class="text-[10px] text-secondary-light">Review submission unlocks automatically upon delivery confirmation.</p>
             </div>
           `}
         </aside>
@@ -686,30 +890,32 @@ export const customerViews = {
   renderApplyJob(container) {
     container.innerHTML = `
       <section class="relative bg-primary rounded-[2rem] overflow-hidden mb-12 p-8 md:p-16 shadow-premium text-white">
+        <!-- Crescent Motif -->
+        <div class="absolute -right-10 -bottom-10 w-80 h-80 bg-white/5 rounded-full pointer-events-none z-0"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-primary-dark/80 to-transparent z-0"></div>
         <div class="max-w-2xl relative z-10 space-y-5">
-          <span class="text-accent bg-accent/15 border border-accent/20 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">Opportunity</span>
+          <span class="text-accent bg-accent/15 border border-accent/20 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">Join KTF Campus Reseller Network</span>
           <h1 class="font-display text-3xl md:text-4xl lg:text-5xl text-white font-extrabold leading-tight">
-            Earn Extra Pocket Money as a <span class="text-accent">Dumpling Reseller</span>
+            Earn Commission as a <span class="text-accent">Dumpling Reseller</span>
           </h1>
           <p class="text-secondary-light text-sm md:text-base leading-relaxed">
-            University students can join our reseller programme — sell premium frozen dumplings to your campus community and earn commission on every order.
+            Pocket extra income by selling Hot Meal Bar frozen dumplings directly to your fellow students in the hostel blocks. Manage orders, earn commissions, and work at your convenience.
           </p>
         </div>
       </section>
 
       <div class="flex flex-col lg:flex-row gap-8">
         <aside class="w-full lg:w-80 flex-shrink-0">
-          <div class="glass-card rounded-[2rem] p-6 border border-secondary/5 space-y-5">
-            <h3 class="font-display font-bold text-lg text-primary">Why Join Us?</h3>
+          <div class="glass-card rounded-[2rem] p-6 border border-secondary/15 space-y-5">
+            <h3 class="font-display font-bold text-lg text-primary">Value Proposition</h3>
             <div class="space-y-4">
               <div class="flex items-start gap-3">
                 <div class="w-9 h-9 bg-accent/10 rounded-xl flex items-center justify-center text-accent flex-shrink-0 mt-0.5">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
                 <div>
-                  <h4 class="font-display font-semibold text-sm text-primary">Flexible Income</h4>
-                  <p class="text-xs text-secondary-light leading-relaxed">Earn commission on every sale — work around your class schedule.</p>
+                  <h4 class="font-display font-semibold text-sm text-primary">RM 3.00 Per Pack Commission</h4>
+                  <p class="text-xs text-secondary-light leading-relaxed">Earn RM 3.00 directly for every single frozen dumpling bag you sell on campus.</p>
                 </div>
               </div>
               <div class="flex items-start gap-3">
@@ -717,8 +923,8 @@ export const customerViews = {
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.636 50.636 0 00-2.658-.813A59.906 59.906 0 0112 3.493a59.903 59.903 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
                 </div>
                 <div>
-                  <h4 class="font-display font-semibold text-sm text-primary">Campus-Friendly</h4>
-                  <p class="text-xs text-secondary-light leading-relaxed">No upfront cost, no inventory — designed for students.</p>
+                  <h4 class="font-display font-semibold text-sm text-primary">Completely Flexible</h4>
+                  <p class="text-xs text-secondary-light leading-relaxed">No fixed hours. Work during evenings or weekends when students are in hostiles.</p>
                 </div>
               </div>
               <div class="flex items-start gap-3">
@@ -726,17 +932,8 @@ export const customerViews = {
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0H6.375c-.621 0-1.125-.504-1.125-1.125V14.25m17.25 0V6.375c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v7.875m17.25 0h-1.5"/></svg>
                 </div>
                 <div>
-                  <h4 class="font-display font-semibold text-sm text-primary">We Handle Delivery</h4>
-                  <p class="text-xs text-secondary-light leading-relaxed">Collect orders and addresses — we ship directly to your customers.</p>
-                </div>
-              </div>
-              <div class="flex items-start gap-3">
-                <div class="w-9 h-9 bg-yellow-100 rounded-xl flex items-center justify-center text-yellow-600 flex-shrink-0 mt-0.5">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
-                </div>
-                <div>
-                  <h4 class="font-display font-semibold text-sm text-primary">Community Network</h4>
-                  <p class="text-xs text-secondary-light leading-relaxed">Join a growing network of student entrepreneurs across campuses.</p>
+                  <h4 class="font-display font-semibold text-sm text-primary">No Upfront Cost</h4>
+                  <p class="text-xs text-secondary-light leading-relaxed">We provide the marketing resources and initial training. Zero start-up capital required.</p>
                 </div>
               </div>
             </div>
@@ -744,7 +941,7 @@ export const customerViews = {
         </aside>
 
         <main class="flex-grow">
-          <div class="glass-card rounded-[2rem] p-6 md:p-8 border border-secondary/5 space-y-6">
+          <div class="glass-card rounded-[2rem] p-6 md:p-8 border border-secondary/15 space-y-6">
             <h2 class="font-display text-2xl font-bold text-primary border-b border-secondary/5 pb-4">Student Reseller Application</h2>
             <form id="applyJobForm" onsubmit="event.preventDefault(); window.app.submitApplication(new FormData(this))" class="space-y-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -753,18 +950,18 @@ export const customerViews = {
                   <input type="text" name="fullName" required placeholder="e.g. Ahmad bin Abdullah" class="form-input-premium text-sm py-2.5" />
                 </div>
                 <div class="space-y-1">
-                  <label class="text-xs font-semibold text-secondary-light block">Student ID</label>
-                  <input type="text" name="studentId" required placeholder="e.g. A21CS1234" class="form-input-premium text-sm py-2.5" />
+                  <label class="text-xs font-semibold text-secondary-light block">Matric / Student ID Number</label>
+                  <input type="text" name="studentId" required placeholder="e.g. A22CS0102" class="form-input-premium text-sm py-2.5" />
                 </div>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="space-y-1">
                   <label class="text-xs font-semibold text-secondary-light block">University / Institution</label>
-                  <input type="text" name="university" required placeholder="e.g. Universiti Teknologi Malaysia" class="form-input-premium text-sm py-2.5" />
+                  <input type="text" name="university" required readonly value="Universiti Teknologi Malaysia (UTM)" class="form-input-premium text-sm py-2.5 bg-gray-50 cursor-not-allowed" />
                 </div>
                 <div class="space-y-1">
-                  <label class="text-xs font-semibold text-secondary-light block">Faculty / Department</label>
-                  <input type="text" name="faculty" required placeholder="e.g. Faculty of Computing" class="form-input-premium text-sm py-2.5" />
+                  <label class="text-xs font-semibold text-secondary-light block">Hostel Block / College Name</label>
+                  <input type="text" name="faculty" required placeholder="e.g. Kolej Tun Fatimah (KTF)" class="form-input-premium text-sm py-2.5" />
                 </div>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -773,13 +970,13 @@ export const customerViews = {
                   <input type="email" name="email" required placeholder="e.g. ahmad@graduate.utm.my" class="form-input-premium text-sm py-2.5" />
                 </div>
                 <div class="space-y-1">
-                  <label class="text-xs font-semibold text-secondary-light block">Phone Number</label>
+                  <label class="text-xs font-semibold text-secondary-light block">WhatsApp Phone Number</label>
                   <input type="tel" name="phone" required placeholder="e.g. +60 12-345 6789" class="form-input-premium text-sm py-2.5" />
                 </div>
               </div>
               <div class="space-y-1">
-                <label class="text-xs font-semibold text-secondary-light block">Why do you want to become a reseller?</label>
-                <textarea name="motivation" rows="4" required placeholder="Tell us about your motivation and how you plan to sell frozen dumplings on your campus..." class="form-input-premium text-sm py-2.5"></textarea>
+                <label class="text-xs font-semibold text-secondary-light block">Why do you want to become a reseller? (Motivation)</label>
+                <textarea name="motivation" rows="4" required placeholder="Describe how you plan to market frozen dumplings to students in your block..." class="form-input-premium text-sm py-2.5"></textarea>
               </div>
               <div class="pt-2">
                 <label class="flex items-start gap-3 cursor-pointer">
@@ -809,16 +1006,18 @@ export const customerViews = {
       motivation: formData.get('motivation'),
       submittedAt: new Date().toISOString()
     };
-    const apps = JSON.parse(localStorage.getItem('gk_applications') || '[]');
-    apps.push(application);
-    localStorage.setItem('gk_applications', JSON.stringify(apps));
+    
+    // In-memory/session only storage simulation
+    if (!window.GK_APPLICATIONS) window.GK_APPLICATIONS = [];
+    window.GK_APPLICATIONS.push(application);
+    
     window.app.showFloatingAlert('Application submitted successfully! We will contact you soon.', 'success');
     window.app.switchView('home');
   },
 
   renderTrackOrder(container) {
     const statusLabels = {
-      'received': 'Order Received', 'preparing': 'Preparing', 'cooking': 'Cooking',
+      'received': 'Placed', 'preparing': 'Preparing', 'cooking': 'Ready for Shipping',
       'out_for_delivery': 'Out for Delivery', 'delivered': 'Delivered'
     };
     const statusColors = {
@@ -827,8 +1026,8 @@ export const customerViews = {
       'delivered': 'bg-green-100 text-green-700'
     };
 
-    const recentOrders = store.state.orders.slice(0, 8).map(o => {
-      const meal = store.state.meals.find(m => m.mealId === o.mealId);
+    const recentOrders = window.store.state.orders.slice(0, 8).map(o => {
+      const meal = window.store.state.meals.find(m => m.mealId === o.mealId);
       return { ...o, meal };
     });
 
@@ -837,7 +1036,7 @@ export const customerViews = {
       if (trackOrderResult.order) {
         const { order, tracking, meal, customer } = trackOrderResult;
         resultHtml = `
-          <div class="glass-card rounded-[2rem] p-6 md:p-8 border border-secondary/5 space-y-6 animate-slide-up">
+          <div class="glass-card rounded-[2rem] p-6 md:p-8 border border-secondary/15 space-y-6 animate-slide-up">
             <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-secondary/5 pb-5 gap-3">
               <div>
                 <span class="text-[10px] text-accent font-semibold uppercase tracking-wider">Order Found</span>
@@ -847,14 +1046,14 @@ export const customerViews = {
                 ${statusLabels[order.status] || order.status}
               </span>
             </div>
-            ${renderTrackingStepper(order.status)}
+            ${window.renderTrackingStepper(order.status)}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-secondary/5">
               <div class="space-y-3">
                 <h4 class="font-display font-semibold text-xs uppercase tracking-wider text-secondary-light">Order Details</h4>
                 <div class="text-xs text-charcoal space-y-2 leading-relaxed">
                   <p><strong class="text-primary">Meal:</strong> ${meal ? meal.mealName : 'N/A'}</p>
                   <p><strong class="text-primary">Quantity:</strong> ${order.quantity}</p>
-                  <p><strong class="text-primary">Amount:</strong> $${order.amount.toFixed(2)}</p>
+                  <p><strong class="text-primary">Amount:</strong> RM ${order.amount.toFixed(2)}</p>
                   <p><strong class="text-primary">Date:</strong> ${new Date(order.orderDate).toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>
               </div>
@@ -863,7 +1062,7 @@ export const customerViews = {
                 <div class="text-xs text-charcoal space-y-2 leading-relaxed">
                   <p><strong class="text-primary">Customer:</strong> ${customer ? customer.name : 'Guest'}</p>
                   <p><strong class="text-primary">Est. Arrival:</strong> ${tracking ? tracking.estimatedTime : 'N/A'}</p>
-                  <p><strong class="text-primary">Driver:</strong> ${tracking ? tracking.driverName : 'N/A'}</p>
+                  <p><strong class="text-primary">Courier:</strong> ${tracking ? tracking.driverName : 'N/A'}</p>
                   <p><strong class="text-primary">Contact:</strong> ${tracking ? tracking.driverPhone : 'N/A'}</p>
                 </div>
               </div>
@@ -881,8 +1080,8 @@ export const customerViews = {
       }
     } else {
       resultHtml = `
-        <div class="glass-card rounded-[2rem] p-6 md:p-8 border border-secondary/5">
-          <h3 class="font-display font-bold text-lg text-primary mb-4">Recent Orders</h3>
+        <div class="glass-card rounded-[2rem] p-6 md:p-8 border border-secondary/15">
+          <h3 class="font-display font-bold text-lg text-primary mb-4">Your Recent Purchases</h3>
           ${recentOrders.length === 0 ? '<p class="text-xs text-secondary-light text-center py-8">No orders found.</p>' : `
             <div class="space-y-3">
               ${recentOrders.map(o => `
@@ -891,7 +1090,7 @@ export const customerViews = {
                     ${o.meal ? `<img src="${o.meal.image}" alt="${o.meal.mealName}" class="w-10 h-10 rounded-xl object-cover border border-secondary/10" />` : ''}
                     <div>
                       <span class="font-display font-semibold text-sm text-primary block">${o.orderId}</span>
-                      <span class="text-xs text-secondary-light">${o.meal ? o.meal.mealName : 'Unknown'} · $${o.amount.toFixed(2)}</span>
+                      <span class="text-xs text-secondary-light">${o.meal ? o.meal.mealName : 'Unknown'} · RM ${o.amount.toFixed(2)}</span>
                     </div>
                   </div>
                   <span class="px-3 py-1 rounded-full text-[10px] font-bold ${statusColors[o.status] || 'bg-gray-100 text-gray-700'}">${statusLabels[o.status] || o.status}</span>
@@ -907,12 +1106,12 @@ export const customerViews = {
       <section class="max-w-3xl mx-auto space-y-8">
         <div class="text-center space-y-3">
           <h1 class="font-display text-3xl md:text-4xl font-extrabold text-primary">Track Your Order</h1>
-          <p class="text-sm text-secondary-light">Enter your order ID to check the real-time status of your delivery.</p>
+          <p class="text-sm text-secondary-light">Enter your order ID (e.g. ord_2001) to view real-time delivery status.</p>
         </div>
-        <div class="glass-card rounded-[2rem] p-6 md:p-8 border border-secondary/5">
+        <div class="glass-card rounded-[2rem] p-6 md:p-8 border border-secondary/15">
           <form onsubmit="event.preventDefault(); window.app.trackOrderLookup(this.orderId.value)" class="flex flex-col sm:flex-row gap-3">
             <div class="relative flex-grow">
-              <input type="text" name="orderId" id="trackOrderInput" placeholder="Enter Order ID (e.g. ord_1234)" class="form-input-premium text-sm py-3 pl-11" value="${trackOrderResult ? trackOrderResult.query : ''}" />
+              <input type="text" name="orderId" id="trackOrderInput" placeholder="Enter Order ID (e.g. ord_2001)" class="form-input-premium text-sm py-3 pl-11" value="${trackOrderResult ? trackOrderResult.query : ''}" />
               <svg class="w-5 h-5 text-secondary/40 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
             <button type="submit" class="bg-accent hover:bg-accent-dark text-white font-semibold px-8 py-3 rounded-xl shadow-accent-glow hover:shadow-none transition-all cursor-pointer text-sm whitespace-nowrap">Track Order</button>
@@ -926,13 +1125,13 @@ export const customerViews = {
   trackOrderLookup(query) {
     const q = query.trim();
     if (!q) return;
-    const order = store.state.orders.find(o => o.orderId.toLowerCase() === q.toLowerCase());
-    const tracking = order ? store.state.delivery.find(d => d.orderId === order.orderId) : null;
-    const meal = order ? store.state.meals.find(m => m.mealId === order.mealId) : null;
-    const customer = order ? store.state.customers.find(c => c.customerId === order.customerId) : null;
+    const order = window.store.state.orders.find(o => o.orderId.toLowerCase() === q.toLowerCase());
+    const tracking = order ? window.store.state.delivery.find(d => d.orderId === order.orderId) : null;
+    const meal = order ? window.store.state.meals.find(m => m.mealId === order.mealId) : null;
+    const customer = order ? window.store.state.customers.find(c => c.customerId === order.customerId) : null;
     trackOrderResult = { query: q, order, tracking, meal, customer };
     const container = document.getElementById('view-container');
-    if (store.state.activeView === 'track-order' && container) {
+    if (window.store.state.activeView === 'track-order' && container) {
       this.renderTrackOrder(container);
     }
   }
@@ -940,10 +1139,12 @@ export const customerViews = {
 
 // Bind to window.app for click triggers
 window.app = window.app || {};
-window.app.setCatalogCategory = customerViews.setCatalogCategory.bind(customerViews);
-window.app.catalogSort = customerViews.catalogSort.bind(customerViews);
-window.app.catalogSearch = customerViews.catalogSearch.bind(customerViews);
-window.app.catalogPage = customerViews.catalogPage.bind(customerViews);
-window.app.submitCheckout = customerViews.submitCheckout.bind(customerViews);
-window.app.submitApplication = customerViews.submitApplication.bind(customerViews);
-window.app.trackOrderLookup = customerViews.trackOrderLookup.bind(customerViews);
+window.app.setCatalogCategory = window.customerViews.setCatalogCategory.bind(window.customerViews);
+window.app.catalogSort = window.customerViews.catalogSort.bind(window.customerViews);
+window.app.catalogSearch = window.customerViews.catalogSearch.bind(window.customerViews);
+window.app.catalogPage = window.customerViews.catalogPage.bind(window.customerViews);
+window.app.submitCheckout = window.customerViews.submitCheckout.bind(window.customerViews);
+window.app.submitApplication = window.customerViews.submitApplication.bind(window.customerViews);
+window.app.trackOrderLookup = window.customerViews.trackOrderLookup.bind(window.customerViews);
+window.app.updatePlannerQty = window.customerViews.updatePlannerQty.bind(window.customerViews);
+window.app.addCustomSteamerToCart = window.customerViews.addCustomSteamerToCart.bind(window.customerViews);

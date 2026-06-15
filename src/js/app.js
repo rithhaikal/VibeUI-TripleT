@@ -1,9 +1,5 @@
 // app.js - Main orchestrator tying Views, Components, and the State Store together
 
-import { store } from './store.js';
-import { customerViews } from './views/customer.js';
-import { adminViews } from './views/admin.js';
-
 class App {
   constructor() {
     this.viewContainer = null;
@@ -25,10 +21,10 @@ class App {
     this.detailsModal = document.getElementById('details-modal');
 
     // Subscribe to State Changes for reactive rendering
-    store.subscribe((state) => this.render(state));
+    window.store.subscribe((state) => this.render(state));
 
-    // Load initial JSON datasets
-    await store.init();
+    // Load initial datasets
+    await window.store.init();
 
     // Default view
     this.switchView('home');
@@ -36,19 +32,22 @@ class App {
 
   // View router
   switchView(view) {
-    store.setState({ activeView: view });
+    window.store.setState({ activeView: view });
+    
+    // Auto scroll to top on page switches
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   // Details Modal controls
   openMealDetails(mealId) {
-    store.setState({ selectedMealId: mealId });
+    window.store.setState({ selectedMealId: mealId });
     this.detailsModal.classList.remove('hidden');
     this.detailsModal.classList.add('flex');
     this.renderModalContent(mealId);
   }
 
   closeMealDetails() {
-    store.setState({ selectedMealId: null });
+    window.store.setState({ selectedMealId: null });
     this.detailsModal.classList.add('hidden');
     this.detailsModal.classList.remove('flex');
   }
@@ -56,14 +55,14 @@ class App {
   renderModalContent(mealId) {
     const modalInner = document.getElementById('modal-content-inner');
     if (modalInner) {
-      modalInner.innerHTML = customerViews.renderMealDetails(mealId);
+      modalInner.innerHTML = window.customerViews.renderMealDetails(mealId);
     }
   }
 
   // Cart Drawer controls
   openCartDrawer() {
     this.cartDrawer.classList.remove('translate-x-full');
-    customerViews.renderCartDrawer();
+    window.customerViews.renderCartDrawer();
   }
 
   closeCartDrawer() {
@@ -72,24 +71,24 @@ class App {
 
   // Proxies for cart mutations
   addToCart(mealId, qty = 1) {
-    store.addToCart(mealId, qty);
+    window.store.addToCart(mealId, qty);
     this.openCartDrawer(); // Automatically slide drawer open
   }
 
   removeFromCart(mealId) {
-    store.removeFromCart(mealId);
+    window.store.removeFromCart(mealId);
   }
 
   updateCartQuantity(mealId, quantity) {
-    store.updateCartQuantity(mealId, quantity);
+    window.store.updateCartQuantity(mealId, quantity);
   }
 
   // Rating form submittal
   submitRating(mealId, rating, reviewText) {
-    store.addReview(mealId, rating, reviewText);
+    window.store.addReview(mealId, rating, reviewText);
     
     // Clear tracked order tracking since review has been submitted
-    store.setState({ activeOrder: null });
+    window.store.setState({ activeOrder: null });
     
     // Alert customer (premium style)
     this.showFloatingAlert("Thank you! Your review has been submitted successfully.", "success");
@@ -152,7 +151,7 @@ class App {
       mainBody.classList.remove('lg:pl-64', 'pt-6');
       mainBody.classList.add('pt-24');
       
-      this.updateHeaderCartBadge(store.getCartCount());
+      this.updateHeaderCartBadge(window.store.getCartCount());
       this.updateHeaderActiveLinks(state.activeView);
     }
 
@@ -163,34 +162,34 @@ class App {
       
       switch (state.activeView) {
         case 'home':
-          customerViews.renderHome(this.viewContainer);
+          window.customerViews.renderHome(this.viewContainer);
           break;
         case 'catalog':
-          customerViews.renderCatalog(this.viewContainer);
+          window.customerViews.renderCatalog(this.viewContainer);
           break;
         case 'checkout':
-          customerViews.renderCheckout(this.viewContainer);
+          window.customerViews.renderCheckout(this.viewContainer);
           break;
         case 'tracking':
-          customerViews.renderTracking(this.viewContainer);
+          window.customerViews.renderTracking(this.viewContainer);
           break;
         case 'admin-dash':
-          adminViews.renderDashboard(this.viewContainer);
+          window.adminViews.renderDashboard(this.viewContainer);
           break;
         case 'admin-orders':
-          adminViews.renderOrders(this.viewContainer);
+          window.adminViews.renderOrders(this.viewContainer);
           break;
         case 'apply':
-          customerViews.renderApplyJob(this.viewContainer);
+          window.customerViews.renderApplyJob(this.viewContainer);
           break;
         case 'track-order':
-          customerViews.renderTrackOrder(this.viewContainer);
+          window.customerViews.renderTrackOrder(this.viewContainer);
           break;
         case 'admin-customers':
-          adminViews.renderCustomers(this.viewContainer);
+          window.adminViews.renderCustomers(this.viewContainer);
           break;
         default:
-          customerViews.renderHome(this.viewContainer);
+          window.customerViews.renderHome(this.viewContainer);
       }
     }
 
@@ -199,7 +198,7 @@ class App {
       this.renderModalContent(state.selectedMealId);
     }
     if (!this.cartDrawer.classList.contains('translate-x-full')) {
-      customerViews.renderCartDrawer();
+      window.customerViews.renderCartDrawer();
     }
   }
 
@@ -251,21 +250,21 @@ class App {
 document.addEventListener('DOMContentLoaded', () => {
   const app = new App();
   
-  // Merge app instance properties into the existing window.app object to preserve other views' bindings
+  // Preserve any existing window.app bindings set by view scripts (customer.js, admin.js)
+  // then bind all App class methods — class prototype methods need explicit binding
   window.app = window.app || {};
-  Object.assign(window.app, app);
-  
-  // Bind simple navigation helpers
-  window.app.switchView = app.switchView.bind(app);
-  window.app.openMealDetails = app.openMealDetails.bind(app);
-  window.app.closeMealDetails = app.closeMealDetails.bind(app);
-  window.app.openCartDrawer = app.openCartDrawer.bind(app);
-  window.app.closeCartDrawer = app.closeCartDrawer.bind(app);
-  window.app.addToCart = app.addToCart.bind(app);
-  window.app.removeFromCart = app.removeFromCart.bind(app);
-  window.app.updateCartQuantity = app.updateCartQuantity.bind(app);
-  window.app.submitRating = app.submitRating.bind(app);
+
+  // Core navigation & UI
+  window.app.switchView           = app.switchView.bind(app);
+  window.app.openMealDetails      = app.openMealDetails.bind(app);
+  window.app.closeMealDetails     = app.closeMealDetails.bind(app);
+  window.app.openCartDrawer       = app.openCartDrawer.bind(app);
+  window.app.closeCartDrawer      = app.closeCartDrawer.bind(app);
+  window.app.addToCart            = app.addToCart.bind(app);
+  window.app.removeFromCart       = app.removeFromCart.bind(app);
+  window.app.updateCartQuantity   = app.updateCartQuantity.bind(app);
+  window.app.submitRating         = app.submitRating.bind(app);
+  window.app.showFloatingAlert    = app.showFloatingAlert.bind(app);
 
   app.start();
 });
-

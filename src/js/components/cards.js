@@ -1,6 +1,6 @@
 // cards.js - UI renderer for catalog cards, rating widgets, and category chips
 
-export function renderRatingStars(rating) {
+function renderRatingStars(rating) {
   const fullStars = Math.floor(rating);
   const hasHalf = rating % 1 >= 0.4;
   let html = '';
@@ -12,7 +12,7 @@ export function renderRatingStars(rating) {
       html += `<svg class="w-4 h-4 text-accent fill-current" viewBox="0 0 20 20">
         <defs>
           <linearGradient id="halfStar">
-            <stop offset="50%" stop-color="#C97C5D"/>
+            <stop offset="50%" stop-color="#C49A45"/>
             <stop offset="50%" stop-color="#E0DCD3"/>
           </linearGradient>
         </defs>
@@ -25,7 +25,7 @@ export function renderRatingStars(rating) {
   return html;
 }
 
-export function renderMealCard(meal) {
+function renderMealCard(meal) {
   return `
     <div class="group bg-white rounded-3xl overflow-hidden border border-secondary/10 shadow-premium hover:shadow-premium-hover transition-all duration-300 animate-slide-up flex flex-col justify-between h-full">
       <!-- Image container -->
@@ -49,9 +49,10 @@ export function renderMealCard(meal) {
       <!-- Info container -->
       <div class="p-5 flex flex-col flex-grow">
         <div class="flex-grow">
-          <h3 class="font-display font-semibold text-lg text-primary mb-1 group-hover:text-accent transition-colors cursor-pointer line-clamp-1" onclick="window.app.openMealDetails('${meal.mealId}')">
+          <h3 class="font-display font-semibold text-base text-primary mb-1 group-hover:text-accent transition-colors cursor-pointer line-clamp-1" onclick="window.app.openMealDetails('${meal.mealId}')">
             ${meal.mealName}
           </h3>
+          <p class="text-xs text-secondary-light font-display mb-2">${meal.chineseName || ''}</p>
           <p class="text-charcoal-light text-xs line-clamp-2 mb-4 leading-relaxed">
             ${meal.description}
           </p>
@@ -60,14 +61,14 @@ export function renderMealCard(meal) {
         <div class="flex items-center justify-between pt-3 border-t border-secondary/5 mt-auto">
           <div>
             <span class="text-xs text-secondary-light block">Price</span>
-            <span class="text-lg font-bold text-primary font-display">$${meal.price.toFixed(2)}</span>
+            <span class="text-base font-bold text-primary font-display">RM ${meal.price.toFixed(2)}</span>
           </div>
           <button 
             class="bg-accent hover:bg-accent-dark text-white p-3 rounded-2xl shadow-accent-glow hover:shadow-none transition-all flex items-center justify-center cursor-pointer active:scale-95"
             onclick="event.stopPropagation(); window.app.addToCart('${meal.mealId}')"
             aria-label="Add to cart"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
             </svg>
           </button>
@@ -77,7 +78,7 @@ export function renderMealCard(meal) {
   `;
 }
 
-export function renderCategoryChips(categories, activeCategory, onSelectCallbackName) {
+function renderCategoryChips(categories, activeCategory, onSelectCallbackName) {
   return categories.map(cat => {
     const isActive = cat === activeCategory;
     const bgClass = isActive 
@@ -93,3 +94,8 @@ export function renderCategoryChips(categories, activeCategory, onSelectCallback
     `;
   }).join('');
 }
+
+// Bind to window for global access
+window.renderRatingStars = renderRatingStars;
+window.renderMealCard = renderMealCard;
+window.renderCategoryChips = renderCategoryChips;

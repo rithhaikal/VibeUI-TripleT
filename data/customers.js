@@ -1,0 +1,28 @@
+// data/customers.js - Customer/Student Profiles
+window.customersData = [
+  { "customerId": "cust_001", "name": "Ahmad Farhan", "email": "farhan@graduate.utm.my", "phone": "+60 12-738 9201", "location": "KTF Block M02, Room 304, UTM JB", "joinDate": "2026-01-15T08:30:00Z" },
+  { "customerId": "cust_002", "name": "Sarah Tan", "email": "sarahtan@graduate.utm.my", "phone": "+60 19-823 4810", "location": "KDO Block L04, Room 102, UTM JB", "joinDate": "2026-02-10T14:22:00Z" },
+  { "customerId": "cust_003", "name": "Mohd Danial", "email": "danial@graduate.utm.my", "phone": "+60 17-645 2819", "location": "KDSE Block G09, Room 411, UTM JB", "joinDate": "2026-03-01T09:15:00Z" },
+  { "customerId": "cust_004", "name": "Ling Siew Mei", "email": "sm.ling@graduate.utm.my", "phone": "+60 11-2384 9271", "location": "KTF Block M05, Room 209, UTM JB", "joinDate": "2026-03-12T11:45:00Z" },
+  { "customerId": "cust_005", "name": "Muneswaran", "email": "munesh@graduate.utm.my", "phone": "+60 13-920 1837", "location": "KTR Block A02, Room 315, UTM JB", "joinDate": "2026-03-24T16:50:00Z" },
+  { "customerId": "cust_006", "name": "Fakhrul Mustaqim", "email": "fakhrul.m@graduate.utm.my", "phone": "+60 12-345 6789", "location": "KTF Block M01, Room 101, UTM JB", "joinDate": "2026-04-01T10:00:00Z" },
+  { "customerId": "cust_007", "name": "Nabilah Yusof", "email": "nabilah.y@graduate.utm.my", "phone": "+60 14-839 2018", "location": "KP Block B01, Room 202, UTM JB", "joinDate": "2026-04-05T09:30:00Z" },
+  { "customerId": "cust_008", "name": "Darren Lim", "email": "darren.lim@graduate.utm.my", "phone": "+60 16-728 1930", "location": "KTF Block M04, Room 404, UTM JB", "joinDate": "2026-04-10T12:00:00Z" },
+  { "customerId": "cust_009", "name": "Siti Aminah", "email": "siti.a@graduate.utm.my", "phone": "+60 18-920 3847", "location": "KDO Block L02, Room 303, UTM JB", "joinDate": "2026-04-12T15:10:00Z" },
+  { "customerId": "cust_010", "name": "Teoh Wei Kiat", "email": "wk.teoh@graduate.utm.my", "phone": "+60 17-829 1029", "location": "KDSE Block H03, Room 105, UTM JB", "joinDate": "2026-04-15T10:45:00Z" },
+  { "customerId": "cust_011", "name": "Khairul Anuar", "email": "khairul.a@graduate.utm.my", "phone": "+60 13-892 0182", "location": "KTR Block B05, Room 212, UTM JB", "joinDate": "2026-04-18T14:30:00Z" },
+  { "customerId": "cust_012", "name": "Nurul Izzah", "email": "izzah.n@graduate.utm.my", "phone": "+60 11-3829 1083", "location": "KTF Block M03, Room 108, UTM JB", "joinDate": "2026-04-20T11:20:00Z" },
+  { "customerId": "cust_013", "name": "Justin Ng", "email": "justin.ng@graduate.utm.my", "phone": "+60 12-892 3847", "location": "KDO Block L06, Room 402, UTM JB", "joinDate": "2026-04-22T16:15:00Z" },
+  { "customerId": "cust_014", "name": "Aliff Hakimi", "email": "aliff.h@graduate.utm.my", "phone": "+60 14-920 3817", "location": "KDSE Block G12, Room 309, UTM JB", "joinDate": "2026-04-25T09:00:00Z" },
+  { "customerId": "cust_015", "name": "Divya Nair", "email": "divya.n@graduate.utm.my", "phone": "+60 19-728 1028", "location": "KTF Block M06, Room 215, UTM JB", "joinDate": "2026-04-28T13:45:00Z" },
+  { "customerId": "cust_016", "name": "Muhammad Haziq", "email": "haziq.m@graduate.utm.my", "phone": "+60 17-291 0382", "location": "KTR Block C01, Room 101, UTM JB", "joinDate": "2026-05-01T10:30:00Z" },
+  { "customerId": "cust_017", "name": "Chloe Wong", "email": "chloe.wong@graduate.utm.my", "phone": "+60 16-829 3847", "location": "KDO Block L01, Room 204, UTM JB", "joinDate": "2026-05-03T15:20:00Z" },
+  { "customerId": "cust_018", "name": "Syed Syamil", "email": "syamil.s@graduate.utm.my", "phone": "+60 12-982 0183", "location": "KDSE Block H05, Room 402, UTM JB", "joinDate": "2026-05-05T09:15:00Z" },
+  { "customerId": "cust_019", "name": "Amina Begum", "email": "amina.b@graduate.utm.my", "phone": "+60 13-918 2038", "location": "KTF Block M02, Room 102, UTM JB", "joinDate": "2026-05-08T11:40:00Z" },
+  { "customerId": "cust_020", "name": "Edison Chew", "email": "edison.c@graduate.utm.my", "phone": "+60 18-291 0387", "location": "KTR Block B03, Room 307, UTM JB", "joinDate": "2026-05-10T14:50:00Z" },
+  { "customerId": "cust_021", "name": "Nur Aisyah", "email": "aisyah.n@graduate.utm.my", "phone": "+60 14-892 0182", "location": "KTF Block M01, Room 301, UTM JB", "joinDate": "2026-05-12T10:15:00Z" },
+  { "customerId": "cust_022", "name": "Lee Kah Seng", "email": "ks.lee@graduate.utm.my", "phone": "+60 16-982 1083", "location": "KDSE Block G04, Room 204, UTM JB", "joinDate": "2026-05-15T16:30:00Z" },
+  { "customerId": "cust_023", "name": "Wan Amirul", "email": "amirul.w@graduate.utm.my", "phone": "+60 17-910 2837", "location": "KDO Block L03, Room 103, UTM JB", "joinDate": "2026-05-18T11:10:00Z" },
+  { "customerId": "cust_024", "name": "Tengku Zulfikar", "email": "zulfikar.t@graduate.utm.my", "phone": "+60 12-893 1029", "location": "KTR Block C05, Room 405, UTM JB", "joinDate": "2026-05-20T14:20:00Z" },
+  { "customerId": "cust_025", "name": "Tan Mei Xuan", "email": "mx.tan@graduate.utm.my", "phone": "+60 19-819 2837", "location": "KTF Block M05, Room 308, UTM JB", "joinDate": "2026-05-22T09:45:00Z" }
+];

@@ -1,6 +1,6 @@
 // table.js - Dynamic table layouts and pagination helpers for Admin view screens
 
-export function renderPagination(page, totalPages, targetMethodName) {
+function renderPagination(page, totalPages, targetMethodName) {
   if (totalPages <= 1) return '';
   
   let buttons = '';
@@ -57,7 +57,7 @@ export function renderPagination(page, totalPages, targetMethodName) {
   `;
 }
 
-export function renderOrderTable(items) {
+function renderOrderTable(items) {
   if (items.length === 0) {
     return `
       <div class="py-12 text-center text-secondary-light">
@@ -82,7 +82,7 @@ export function renderOrderTable(items) {
         statusLabel = 'Preparing';
         break;
       case 'cooking':
-        statusClass = 'bg-accent/20 text-accent-dark border-accent/30';
+        statusClass = 'bg-amber-100 text-amber-700 border-amber-200';
         statusLabel = 'Cooking';
         break;
       case 'out_for_delivery':
@@ -105,34 +105,43 @@ export function renderOrderTable(items) {
       minute: '2-digit'
     });
 
+    const commissionEarned = order.commission || (order.quantity * 3.00);
+
     return `
-      <tr class="hover:bg-background/20 transition-colors border-b border-secondary/5">
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-primary font-display">
+      <tr class="hover:bg-background/20 transition-colors border-b border-secondary/5 text-xs">
+        <td class="px-4 py-3.5 whitespace-nowrap font-semibold text-primary font-display">
           #${order.orderId.substring(4) || order.orderId}
         </td>
-        <td class="px-6 py-4 whitespace-nowrap">
-          <div class="text-sm font-medium text-charcoal">${order.customerName}</div>
-          <div class="text-xs text-secondary-light">Guest Account</div>
+        <td class="px-4 py-3.5 whitespace-nowrap">
+          <div class="font-medium text-charcoal">${order.customerName}</div>
+          <div class="text-[10px] text-secondary-light">Student / Guest</div>
         </td>
-        <td class="px-6 py-4 whitespace-nowrap">
-          <div class="text-sm text-charcoal font-medium">${order.mealName}</div>
-          <div class="text-xs text-secondary-light">Qty: ${order.quantity}</div>
+        <td class="px-4 py-3.5 whitespace-nowrap">
+          <div class="text-charcoal font-medium truncate max-w-[150px]">${order.mealName}</div>
+          <div class="text-[10px] text-secondary-light">Qty: ${order.quantity}</div>
         </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-charcoal font-semibold">
-          $${order.amount.toFixed(2)}
+        <td class="px-4 py-3.5 whitespace-nowrap">
+          <div class="text-primary font-semibold truncate max-w-[150px]">${order.resellerName || 'Direct Store'}</div>
+          <div class="text-[10px] text-secondary-light">ID: ${order.resellerId || 'N/A'}</div>
         </td>
-        <td class="px-6 py-4 whitespace-nowrap text-xs text-secondary-light">
+        <td class="px-4 py-3.5 whitespace-nowrap text-success font-semibold">
+          RM ${commissionEarned.toFixed(2)}
+        </td>
+        <td class="px-4 py-3.5 whitespace-nowrap text-charcoal font-bold">
+          RM ${order.amount.toFixed(2)}
+        </td>
+        <td class="px-4 py-3.5 whitespace-nowrap text-secondary-light">
           ${orderTime}
         </td>
-        <td class="px-6 py-4 whitespace-nowrap">
-          <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full border ${statusClass}">
+        <td class="px-4 py-3.5 whitespace-nowrap">
+          <span class="px-2.5 py-0.5 inline-flex text-[10px] font-semibold rounded-full border ${statusClass}">
             ${statusLabel}
           </span>
         </td>
-        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+        <td class="px-4 py-3.5 whitespace-nowrap text-right">
           <select 
             onchange="window.app.adminUpdateStatus('${order.orderId}', this.value)"
-            class="bg-white border border-secondary/15 rounded-lg text-xs px-2.5 py-1.5 focus:outline-none focus:border-accent cursor-pointer transition-colors"
+            class="bg-white border border-secondary/15 rounded-lg text-[10px] px-2 py-1 focus:outline-none focus:border-accent cursor-pointer transition-colors"
           >
             <option value="received" ${order.status === 'received' ? 'selected' : ''}>Received</option>
             <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>Preparing</option>
@@ -149,14 +158,16 @@ export function renderOrderTable(items) {
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-secondary/10">
         <thead>
-          <tr class="bg-background-dark/30">
-            <th class="px-6 py-3.5 text-left text-xs font-bold text-secondary uppercase tracking-wider">ID</th>
-            <th class="px-6 py-3.5 text-left text-xs font-bold text-secondary uppercase tracking-wider">Customer</th>
-            <th class="px-6 py-3.5 text-left text-xs font-bold text-secondary uppercase tracking-wider">Meal Item</th>
-            <th class="px-6 py-3.5 text-left text-xs font-bold text-secondary uppercase tracking-wider">Total</th>
-            <th class="px-6 py-3.5 text-left text-xs font-bold text-secondary uppercase tracking-wider">Order Date</th>
-            <th class="px-6 py-3.5 text-left text-xs font-bold text-secondary uppercase tracking-wider">Status</th>
-            <th class="px-6 py-3.5 text-right text-xs font-bold text-secondary uppercase tracking-wider">Actions</th>
+          <tr class="bg-background-dark/30 text-[10px] font-bold text-secondary uppercase tracking-wider">
+            <th class="px-4 py-3 text-left">ID</th>
+            <th class="px-4 py-3 text-left">Customer</th>
+            <th class="px-4 py-3 text-left">Dumpling Items</th>
+            <th class="px-4 py-3 text-left">Reseller Name</th>
+            <th class="px-4 py-3 text-left text-success">Commission</th>
+            <th class="px-4 py-3 text-left">Total Retail</th>
+            <th class="px-4 py-3 text-left">Order Date</th>
+            <th class="px-4 py-3 text-left">Status</th>
+            <th class="px-4 py-3 text-right">Actions</th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-secondary/5">
@@ -167,7 +178,7 @@ export function renderOrderTable(items) {
   `;
 }
 
-export function renderCustomerTable(items) {
+function renderCustomerTable(items) {
   if (items.length === 0) {
     return `
       <div class="py-12 text-center text-secondary-light">
@@ -196,7 +207,7 @@ export function renderCustomerTable(items) {
           ${c.orderCount}
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-primary text-right font-display">
-          $${c.totalSpend.toFixed(2)}
+          RM ${c.totalSpend.toFixed(2)}
         </td>
       </tr>
     `;
@@ -222,3 +233,8 @@ export function renderCustomerTable(items) {
     </div>
   `;
 }
+
+// Bind to window for global access
+window.renderPagination = renderPagination;
+window.renderOrderTable = renderOrderTable;
+window.renderCustomerTable = renderCustomerTable;

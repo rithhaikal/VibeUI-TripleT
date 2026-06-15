@@ -1,17 +1,15 @@
 // data-loader.js - High performance local querying engine for static datasets
-
-import { store } from './store.js';
-
-export const dataLoader = {
+window.dataLoader = {
   // Query meals catalog with multiple parameters
   queryMeals({ search = '', category = 'All', sortBy = 'name', page = 1, limit = 12 } = {}) {
-    let list = [...store.state.meals];
+    let list = [...window.store.state.meals];
 
     // Search filter
     if (search.trim()) {
       const q = search.toLowerCase().trim();
       list = list.filter(m => 
         m.mealName.toLowerCase().includes(q) || 
+        (m.chineseName && m.chineseName.toLowerCase().includes(q)) ||
         m.category.toLowerCase().includes(q) ||
         (m.ingredients && m.ingredients.some(i => i.toLowerCase().includes(q)))
       );
@@ -48,17 +46,18 @@ export const dataLoader = {
     };
   },
 
-  // Query order records (Admin context with 300+ items)
+  // Query order records (Admin context with 200+ items)
   queryOrders({ search = '', status = 'All', page = 1, limit = 15 } = {}) {
-    let list = [...store.state.orders];
+    let list = [...window.store.state.orders];
 
-    // Search filter (Order ID or Customer ID / Name lookup)
+    // Search filter (Order ID, Customer ID, Customer Name, or Reseller Name lookup)
     if (search.trim()) {
       const q = search.toLowerCase().trim();
       list = list.filter(o => {
-        const cust = store.state.customers.find(c => c.customerId === o.customerId);
+        const cust = window.store.state.customers.find(c => c.customerId === o.customerId);
         const custName = cust ? cust.name.toLowerCase() : '';
-        return o.orderId.toLowerCase().includes(q) || custName.includes(q);
+        const resellerName = o.resellerName ? o.resellerName.toLowerCase() : '';
+        return o.orderId.toLowerCase().includes(q) || custName.includes(q) || resellerName.includes(q);
       });
     }
 
@@ -74,13 +73,13 @@ export const dataLoader = {
     const totalPages = Math.ceil(total / limit);
     const start = (page - 1) * limit;
     const items = list.slice(start, start + limit).map(o => {
-      const customer = store.state.customers.find(c => c.customerId === o.customerId);
-      const meal = store.state.meals.find(m => m.mealId === o.mealId);
-      const tracking = store.state.delivery.find(d => d.orderId === o.orderId);
+      const customer = window.store.state.customers.find(c => c.customerId === o.customerId);
+      const meal = window.store.state.meals.find(m => m.mealId === o.mealId);
+      const tracking = window.store.state.delivery.find(d => d.orderId === o.orderId);
       return {
         ...o,
         customerName: customer ? customer.name : 'Guest User',
-        mealName: meal ? meal.mealName : 'Deleted Meal',
+        mealName: meal ? meal.mealName : 'Deleted Item',
         estimatedTime: tracking ? tracking.estimatedTime : '--:--'
       };
     });
@@ -94,9 +93,9 @@ export const dataLoader = {
     };
   },
 
-  // Query customer details (Admin context with 250+ items)
+  // Query customer details (Admin context with 25+ items)
   queryCustomers({ search = '', page = 1, limit = 15 } = {}) {
-    let list = [...store.state.customers];
+    let list = [...window.store.state.customers];
 
     if (search.trim()) {
       const q = search.toLowerCase().trim();
@@ -116,7 +115,7 @@ export const dataLoader = {
     const start = (page - 1) * limit;
     const items = list.slice(start, start + limit).map(c => {
       // Aggregate purchase histories
-      const customerOrders = store.state.orders.filter(o => o.customerId === c.customerId);
+      const customerOrders = window.store.state.orders.filter(o => o.customerId === c.customerId);
       const totalSpend = customerOrders.reduce((sum, o) => sum + o.amount, 0);
       return {
         ...c,
@@ -136,26 +135,26 @@ export const dataLoader = {
 
   // Get ratings matching a meal ID
   getMealRatings(mealId) {
-    return store.state.ratings
+    return window.store.state.ratings
       .filter(r => r.mealId === mealId)
       .map(r => {
-        const customer = store.state.customers.find(c => c.customerId === r.customerId);
+        const customer = window.store.state.customers.find(c => c.customerId === r.customerId);
         return {
           ...r,
-          customerName: customer ? customer.name : 'Anonymous Reviewer'
+          customerName: customer ? customer.name : 'Anonymous Student'
         };
       });
   },
 
   // Fetch admin summary statistics
   getAdminMetrics() {
-    const orders = store.state.orders;
+    const orders = window.store.state.orders;
     const totalOrders = orders.length;
     const totalRevenue = orders.reduce((sum, o) => sum + o.amount, 0);
     const activeOrders = orders.filter(o => o.status !== 'delivered').length;
     
     // Average rating
-    const ratings = store.state.ratings;
+    const ratings = window.store.state.ratings;
     const avgRating = ratings.length > 0 
       ? parseFloat((ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length).toFixed(2))
       : 0;
@@ -168,7 +167,7 @@ export const dataLoader = {
 
     const popularMeals = Object.entries(mealQuantities)
       .map(([mealId, quantity]) => {
-        const meal = store.state.meals.find(m => m.mealId === mealId);
+        const meal = window.store.state.meals.find(m => m.mealId === mealId);
         return {
           mealId,
           quantity,

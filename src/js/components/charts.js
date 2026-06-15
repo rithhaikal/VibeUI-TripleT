@@ -1,6 +1,6 @@
 // charts.js - Premium lightweight HTML5 Canvas revenue charts (zero external dependencies)
 
-export function renderRevenueChart(canvasId, timelineData) {
+function renderRevenueChart(canvasId, timelineData) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
 
@@ -21,7 +21,7 @@ export function renderRevenueChart(canvasId, timelineData) {
   ctx.clearRect(0, 0, width, height);
 
   // Configuration
-  const padding = { top: 20, right: 20, bottom: 40, left: 50 };
+  const padding = { top: 25, right: 20, bottom: 40, left: 55 };
   const graphWidth = width - padding.left - padding.right;
   const graphHeight = height - padding.top - padding.bottom;
 
@@ -31,9 +31,9 @@ export function renderRevenueChart(canvasId, timelineData) {
 
   // Draw Grid Lines and Labels
   const gridCount = 4;
-  ctx.strokeStyle = 'rgba(65, 90, 119, 0.08)'; // Secondary outline color
+  ctx.strokeStyle = 'rgba(122, 111, 93, 0.08)'; // Secondary-light border
   ctx.lineWidth = 1;
-  ctx.fillStyle = '#5E7A9C'; // Secondary-light text color
+  ctx.fillStyle = '#7A6F5D'; // Secondary text color
   ctx.font = '10px Inter, sans-serif';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'middle';
@@ -49,7 +49,7 @@ export function renderRevenueChart(canvasId, timelineData) {
     ctx.stroke();
 
     // Axis label
-    ctx.fillText(`$${Math.round(val)}`, padding.left - 10, y);
+    ctx.fillText(`RM ${Math.round(val)}`, padding.left - 8, y);
   }
 
   // Draw X-Axis Labels
@@ -66,8 +66,8 @@ export function renderRevenueChart(canvasId, timelineData) {
 
   // Draw Gradient area under line
   const grad = ctx.createLinearGradient(0, padding.top, 0, padding.top + graphHeight);
-  grad.addColorStop(0, 'rgba(201, 124, 93, 0.25)'); // Accent light transparent
-  grad.addColorStop(1, 'rgba(201, 124, 93, 0.00)');
+  grad.addColorStop(0, 'rgba(196, 154, 69, 0.25)'); // Accent light transparent (gold/bronze)
+  grad.addColorStop(1, 'rgba(196, 154, 69, 0.00)');
 
   ctx.beginPath();
   timelineData.forEach((d, i) => {
@@ -113,7 +113,7 @@ export function renderRevenueChart(canvasId, timelineData) {
     }
   });
 
-  ctx.strokeStyle = '#C97C5D'; // Accent color (Warm Copper)
+  ctx.strokeStyle = '#C49A45'; // Accent gold/bronze
   ctx.lineWidth = 3.5;
   ctx.lineCap = 'round';
   ctx.stroke();
@@ -125,17 +125,20 @@ export function renderRevenueChart(canvasId, timelineData) {
 
     // Outer circle
     ctx.beginPath();
-    ctx.arc(x, y, 6, 0, Math.PI * 2);
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
     ctx.fillStyle = '#FFFFFF';
     ctx.fill();
-    ctx.strokeStyle = '#C97C5D';
+    ctx.strokeStyle = '#C49A45';
     ctx.lineWidth = 2.5;
     ctx.stroke();
 
     // Value text above active point
-    ctx.fillStyle = '#1B263B'; // Primary
+    ctx.fillStyle = '#1E352F'; // Primary dark forest green
     ctx.font = 'bold 9px Inter, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`$${Math.round(d.amount)}`, x, y - 12);
+    ctx.fillText(`RM ${Math.round(d.amount)}`, x, y - 12);
   });
 }
+
+// Bind globally
+window.renderRevenueChart = renderRevenueChart;

@@ -1,12 +1,12 @@
 // tracking.js - Custom interactive maps and stepper timeline for Order tracking screen
 
-export function renderTrackingStepper(status) {
+function renderTrackingStepper(status) {
   const steps = [
-    { key: 'received', label: 'Order Received', desc: 'We have received your order.' },
-    { key: 'preparing', label: 'Preparing', desc: 'Our chef is preparing the ingredients.' },
-    { key: 'cooking', label: 'Cooking', desc: 'Your hot meal is cooking in the kitchen.' },
-    { key: 'out_for_delivery', label: 'Out for Delivery', desc: 'Driver is heading to your location.' },
-    { key: 'delivered', label: 'Delivered', desc: 'Enjoy your hot meal!' }
+    { key: 'received', label: 'Order Placed', desc: 'Reseller has submitted your order.' },
+    { key: 'preparing', label: 'Preparing', desc: 'Preparing frozen dumpling packs.' },
+    { key: 'cooking', label: 'Ready for Delivery', desc: 'Dumplings packed and chilled.' },
+    { key: 'out_for_delivery', label: 'Out for Delivery', desc: 'Reseller is delivering to your hostel.' },
+    { key: 'delivered', label: 'Delivered', desc: 'Dumplings successfully delivered!' }
   ];
 
   const statusIndices = {
@@ -88,20 +88,19 @@ export function renderTrackingStepper(status) {
   `;
 }
 
-export function renderMockMap(status) {
-  // SVG coordinates for animation based on statuses
-  // Restaurant (Fixed): (50, 150)
-  // Delivery Point (Fixed): (350, 50)
+function renderMockMap(status) {
+  // Restaurant (Fixed KTF Alumni area): (50, 150)
+  // Hostels (Fixed): (350, 50)
   let driverX = 50;
   let driverY = 150;
   let progressPct = 0;
 
   if (status === 'preparing') {
-    progressPct = 5;
+    progressPct = 10;
   } else if (status === 'cooking') {
-    progressPct = 15;
+    progressPct = 30;
   } else if (status === 'out_for_delivery') {
-    progressPct = 60;
+    progressPct = 70;
   } else if (status === 'delivered') {
     progressPct = 100;
   }
@@ -116,7 +115,7 @@ export function renderMockMap(status) {
         <!-- Grid Gridlines -->
         <defs>
           <pattern id="mapGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(65, 90, 119, 0.05)" stroke-width="1"/>
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(122, 111, 93, 0.05)" stroke-width="1"/>
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#mapGrid)"/>
@@ -132,25 +131,25 @@ export function renderMockMap(status) {
         <path d="M 250 10 L 250 50" fill="none" stroke="#DFDCD7" stroke-width="8" stroke-linecap="round"/>
 
         <!-- Route trace line -->
-        <path d="M 50 150 L 120 150 L 120 90 L 250 90 L 250 50 L 350 50" fill="none" stroke="#C97C5D" stroke-width="3" stroke-dasharray="8 4" stroke-linecap="round" class="opacity-60"/>
+        <path d="M 50 150 L 120 150 L 120 90 L 250 90 L 250 50 L 350 50" fill="none" stroke="#C49A45" stroke-width="3" stroke-dasharray="8 4" stroke-linecap="round" class="opacity-60"/>
 
         <!-- Restaurant Node (Start) -->
-        <circle cx="50" cy="150" r="10" fill="#1B263B" stroke="#FFFFFF" stroke-width="2.5"/>
-        <text x="50" y="172" fill="#1B263B" font-family="Outfit, sans-serif" font-size="8" font-weight="bold" text-anchor="middle">Gourmet Kitchen</text>
+        <circle cx="50" cy="150" r="10" fill="#1E352F" stroke="#FFFFFF" stroke-width="2.5"/>
+        <text x="50" y="172" fill="#1E352F" font-family="Outfit, sans-serif" font-size="8" font-weight="bold" text-anchor="middle">Hot Meal Bar (KTF)</text>
         
         <!-- Customer Node (Destination) -->
-        <circle cx="350" cy="50" r="10" fill="#2A9D8F" stroke="#FFFFFF" stroke-width="2.5"/>
-        <text x="350" y="32" fill="#2A9D8F" font-family="Outfit, sans-serif" font-size="8" font-weight="bold" text-anchor="middle">Your Home</text>
+        <circle cx="350" cy="50" r="10" fill="#3D8B6F" stroke="#FFFFFF" stroke-width="2.5"/>
+        <text x="350" y="32" fill="#3D8B6F" font-family="Outfit, sans-serif" font-size="8" font-weight="bold" text-anchor="middle">UTM Hostel</text>
 
         <!-- Dynamic Delivery Driver Icon Node -->
         ${status !== 'delivered' ? `
           <g transform="translate(${driverX}, ${driverY})" class="transition-all duration-1000 ease-in-out">
             <!-- Ripple Pulse -->
-            <circle cx="0" cy="0" r="14" fill="#C97C5D" class="opacity-20">
+            <circle cx="0" cy="0" r="14" fill="#C49A45" class="opacity-20">
               <animate attributeName="r" values="8;18;8" dur="2s" repeatCount="indefinite" />
             </circle>
             <!-- Pin -->
-            <circle cx="0" cy="0" r="7" fill="#C97C5D" stroke="#FFFFFF" stroke-width="1.5"/>
+            <circle cx="0" cy="0" r="7" fill="#C49A45" stroke="#FFFFFF" stroke-width="1.5"/>
             <!-- Tiny Bike/Driver Indicator -->
             <circle cx="0" cy="0" r="2.5" fill="#FFFFFF"/>
           </g>
@@ -165,10 +164,14 @@ export function renderMockMap(status) {
           </svg>
         </div>
         <div>
-          <h5 class="text-[10px] text-secondary-light font-medium uppercase tracking-wider">Courier</h5>
-          <p class="text-xs font-bold text-primary">${status === 'delivered' ? 'Arrived' : 'Marcus Vance (En route)'}</p>
+          <h5 class="text-[10px] text-secondary-light font-medium uppercase tracking-wider">Reseller Courier</h5>
+          <p class="text-xs font-bold text-primary">${status === 'delivered' ? 'Arrived at Block' : 'Muhammad Harith (Delivering)'}</p>
         </div>
       </div>
     </div>
   `;
 }
+
+// Bind globally
+window.renderTrackingStepper = renderTrackingStepper;
+window.renderMockMap = renderMockMap;
