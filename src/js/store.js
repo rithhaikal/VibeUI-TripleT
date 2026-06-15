@@ -404,7 +404,7 @@ class AppStore {
     this.setState({ meals });
   }
 
-  addReview(mealId, rating, reviewText) {
+  addReview(orderId, mealId, rating, reviewText) {
     const newRating = {
       ratingId: `rate_${randomId(9100, 9999)}`,
       customerId: this.state.currentUser ? this.state.currentUser.customerId : 'cust_001',
@@ -422,7 +422,13 @@ class AppStore {
     );
 
     const ratings = [newRating, ...this.state.ratings];
-    this.setState({ ratings, meals });
+
+    // Mark the order as reviewed
+    const orders = this.state.orders.map(o =>
+      o.orderId === orderId ? { ...o, reviewed: true } : o
+    );
+
+    this.setState({ ratings, meals, orders });
   }
 }
 

@@ -823,6 +823,21 @@ window.customerViews = {
     const latestAdjustment = activeOrder.lastLocationAdjustment;
 
     container.innerHTML = `
+      <!-- Back Button -->
+      <div class="mb-6">
+        <button
+          onclick="window.app.switchView('track-order')"
+          class="inline-flex items-center gap-2 text-sm font-semibold text-secondary hover:text-primary transition-colors cursor-pointer group"
+        >
+          <span class="w-8 h-8 rounded-xl border border-secondary/20 bg-white flex items-center justify-center group-hover:border-accent/40 group-hover:bg-accent/5 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+            </svg>
+          </span>
+          Back to Order List
+        </button>
+      </div>
+
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Timeline and steps -->
         <main class="lg:col-span-2 space-y-6">
@@ -886,41 +901,57 @@ window.customerViews = {
           </div>
 
           <!-- Add Review Form -->
-          ${activeOrder.status === 'delivered' ? `
-            <div class="glass-card rounded-[2rem] p-6 border border-success/20 bg-success/5 animate-slide-up space-y-4">
-              <div>
-                <h4 class="font-display font-bold text-base text-primary">Enjoyed your ${meal ? meal.mealName : 'dumplings'}?</h4>
-                <p class="text-[11px] text-secondary-light mt-0.5">Please share your experience with us.</p>
+          ${activeOrder.status === 'delivered' ? (
+            activeOrder.reviewed ? `
+              <div class="glass-card rounded-[2rem] p-6 border border-success/20 bg-success/5 text-center py-8">
+                <span class="text-2xl">⭐</span>
+                <h4 class="font-display font-semibold text-sm text-primary mt-2">Feedback Submitted</h4>
+                <p class="text-[10px] text-secondary-light">Thank you for sharing your experience with us!</p>
               </div>
-
-              <form onsubmit="event.preventDefault(); window.app.submitRating('${activeOrder.mealId}', this.rating.value, this.review.value)" class="space-y-3">
-                <!-- Stars select -->
-                <div class="flex items-center gap-1">
-                  <span class="text-xs text-secondary-light mr-2">Your Rating:</span>
-                  <select name="rating" required class="bg-white border border-secondary/15 rounded-lg text-xs px-2.5 py-1 focus:outline-none">
-                    <option value="5">5 Stars (Excellent)</option>
-                    <option value="4">4 Stars (Good)</option>
-                    <option value="3">3 Stars (Average)</option>
-                    <option value="2">2 Stars (Poor)</option>
-                    <option value="1">1 Star (Terrible)</option>
-                  </select>
+            ` : `
+              <div class="glass-card rounded-[2rem] p-6 border border-success/20 bg-success/5 animate-slide-up space-y-4">
+                <div>
+                  <h4 class="font-display font-bold text-base text-primary">Enjoyed your ${meal ? meal.mealName : 'dumplings'}?</h4>
+                  <p class="text-[11px] text-secondary-light mt-0.5">Please share your experience with us.</p>
                 </div>
 
-                <!-- Textarea -->
-                <textarea 
-                  name="review" 
-                  rows="3" 
-                  placeholder="Tell us what you liked or how we can improve..." 
-                  class="form-input-premium text-xs py-2 bg-white"
-                  required
-                ></textarea>
+                <form onsubmit="event.preventDefault(); window.app.submitRating('${activeOrder.orderId}', '${activeOrder.mealId}', this.rating.value, this.review.value)" class="space-y-3">
+                  <!-- Stars select -->
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-xs text-secondary-light mr-2">Your Rating:</span>
+                    <input type="hidden" name="rating" class="review-rating-val" value="5" required />
+                    <div class="flex items-center gap-1">
+                      ${[1, 2, 3, 4, 5].map(num => `
+                        <button
+                          type="button"
+                          onclick="window.app.setInteractiveRating(${num}, this)"
+                          class="star-btn text-accent hover:scale-110 transition-transform cursor-pointer focus:outline-none"
+                          title="${num} Star${num > 1 ? 's' : ''}"
+                        >
+                          <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                          </svg>
+                        </button>
+                      `).join('')}
+                    </div>
+                  </div>
 
-                <button type="submit" class="w-full bg-success hover:bg-success-dark text-white font-semibold py-2.5 rounded-xl transition-all cursor-pointer text-xs shadow-md">
-                  Submit Review
-                </button>
-              </form>
-            </div>
-          ` : `
+                  <!-- Textarea -->
+                  <textarea
+                    name="review"
+                    rows="3"
+                    placeholder="Tell us what you liked or how we can improve..."
+                    class="form-input-premium text-xs py-2 bg-white"
+                    required
+                  ></textarea>
+
+                  <button type="submit" class="w-full bg-success hover:bg-success-dark text-white font-semibold py-2.5 rounded-xl transition-all cursor-pointer text-xs shadow-md">
+                    Submit Review
+                  </button>
+                </form>
+              </div>
+            `
+          ) : `
             <div class="glass-card rounded-[2rem] p-6 border border-secondary/15 text-center py-8">
               <img src="assets/dumplings.gif" alt="Preparing order..." class="w-16 h-16 object-contain mx-auto mb-3 dumpling-bounce" />
               <h4 class="font-display font-semibold text-sm text-primary mb-1">Preparing & Shipping</h4>
@@ -1259,9 +1290,20 @@ window.customerViews = {
         resultHtml = `
           <div class="glass-card rounded-[2rem] p-6 md:p-8 border border-secondary/15 space-y-6 animate-slide-up">
             <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-secondary/5 pb-5 gap-3">
-              <div>
-                <span class="text-[10px] text-accent font-semibold uppercase tracking-wider">Order Found</span>
-                <h2 class="font-display text-2xl font-bold text-primary mt-0.5">Order #${order.orderId}</h2>
+              <div class="flex items-center gap-3">
+                <button
+                  onclick="window.app.clearTrackResult()"
+                  class="w-8 h-8 rounded-xl border border-secondary/20 bg-white flex items-center justify-center hover:border-accent/40 hover:bg-accent/5 transition-all cursor-pointer flex-shrink-0"
+                  title="Back to order list"
+                >
+                  <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+                  </svg>
+                </button>
+                <div>
+                  <span class="text-[10px] text-accent font-semibold uppercase tracking-wider">Order Found</span>
+                  <h2 class="font-display text-2xl font-bold text-primary mt-0.5">Order #${order.orderId}</h2>
+                </div>
               </div>
               <span class="px-4 py-1.5 rounded-full text-xs font-bold ${statusColors[order.status] || 'bg-gray-100 text-gray-700'}">
                 ${statusLabels[order.status] || order.status}
@@ -1288,6 +1330,61 @@ window.customerViews = {
                 </div>
               </div>
             </div>
+            ${order.status === 'delivered' ? (
+              order.reviewed ? `
+                <div class="pt-6 border-t border-secondary/5 mt-4">
+                  <div class="glass-card rounded-[2rem] p-6 border border-success/20 bg-success/5 text-center py-8">
+                    <span class="text-2xl">⭐</span>
+                    <h4 class="font-display font-semibold text-sm text-primary mt-2">Feedback Submitted</h4>
+                    <p class="text-[10px] text-secondary-light">Thank you for sharing your experience with us!</p>
+                  </div>
+                </div>
+              ` : `
+                <div class="pt-6 border-t border-secondary/5 mt-4 space-y-4">
+                  <div class="glass-card rounded-[2rem] p-6 border border-success/20 bg-success/5 animate-slide-up space-y-4">
+                    <div>
+                      <h4 class="font-display font-bold text-base text-primary">Enjoyed your ${meal ? meal.mealName : 'dumplings'}?</h4>
+                      <p class="text-[11px] text-secondary-light mt-0.5">Please share your experience with us.</p>
+                    </div>
+
+                    <form onsubmit="event.preventDefault(); window.app.submitRating('${order.orderId}', '${order.mealId}', this.rating.value, this.review.value)" class="space-y-3">
+                      <!-- Stars select -->
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-xs text-secondary-light mr-2">Your Rating:</span>
+                        <input type="hidden" name="rating" class="review-rating-val" value="5" required />
+                        <div class="flex items-center gap-1">
+                          ${[1, 2, 3, 4, 5].map(num => `
+                            <button
+                              type="button"
+                              onclick="window.app.setInteractiveRating(${num}, this)"
+                              class="star-btn text-accent hover:scale-110 transition-transform cursor-pointer focus:outline-none"
+                              title="${num} Star${num > 1 ? 's' : ''}"
+                            >
+                              <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                              </svg>
+                            </button>
+                          `).join('')}
+                        </div>
+                      </div>
+
+                      <!-- Textarea -->
+                      <textarea
+                        name="review"
+                        rows="3"
+                        placeholder="Tell us what you liked or how we can improve..."
+                        class="form-input-premium text-xs py-2 bg-white"
+                        required
+                      ></textarea>
+
+                      <button type="submit" class="w-full bg-success hover:bg-success-dark text-white font-semibold py-2.5 rounded-xl transition-all cursor-pointer text-xs shadow-md">
+                        Submit Review
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              `
+            ) : ''}
           </div>
         `;
       } else {
@@ -1350,11 +1447,23 @@ window.customerViews = {
     const tracking = order ? window.store.state.delivery.find(d => d.orderId === order.orderId) : null;
     const meal = order ? window.store.state.meals.find(m => m.mealId === order.mealId) : null;
     const customer = order ? window.store.state.customers.find(c => c.customerId === order.customerId) : null;
+
+    if (order && order.status !== 'delivered') {
+      window.store.setState({ activeOrder: order, activeView: 'tracking' });
+      return;
+    }
+
     trackOrderResult = { query: q, order, tracking, meal, customer };
     const container = document.getElementById('view-container');
     if (window.store.state.activeView === 'track-order' && container) {
       this.renderTrackOrder(container);
     }
+  },
+
+  clearTrackResult() {
+    trackOrderResult = null;
+    const container = document.getElementById('view-container');
+    if (container) this.renderTrackOrder(container);
   }
 };
 
@@ -1369,6 +1478,7 @@ window.app.submitApplication = window.customerViews.submitApplication.bind(windo
 window.app.trackOrderLookup = window.customerViews.trackOrderLookup.bind(window.customerViews);
 window.app.updatePlannerQty = window.customerViews.updatePlannerQty.bind(window.customerViews);
 window.app.addCustomSteamerToCart = window.customerViews.addCustomSteamerToCart.bind(window.customerViews);
+window.app.clearTrackResult      = window.customerViews.clearTrackResult.bind(window.customerViews);
 window.app.openLocationChangeModal = window.customerViews.openLocationChangeModal.bind(window.customerViews);
 window.app.closeLocationChangeModal = window.customerViews.closeLocationChangeModal.bind(window.customerViews);
 window.app.previewLocationFee = window.customerViews.previewLocationFee.bind(window.customerViews);
