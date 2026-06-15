@@ -358,11 +358,116 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 30px 80px -24px rgba(15, 30, 26, 0.45);
 }
 
+/* Login */
+.auth-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(28rem, 0.95fr);
+  background: #FFFFFF;
+}
+
+.auth-story-panel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: clamp(2rem, 6vw, 6rem);
+  background:
+    radial-gradient(circle at 85% 15%, rgba(196, 154, 69, 0.22), transparent 25%),
+    linear-gradient(145deg, #0F1E1A 0%, #1E352F 55%, #2D4F46 100%);
+}
+
+.auth-story-panel::after {
+  content: '';
+  position: absolute;
+  width: 28rem;
+  height: 28rem;
+  right: -10rem;
+  bottom: -12rem;
+  border: 4rem solid rgba(255, 255, 255, 0.035);
+  border-radius: 50%;
+}
+
+.auth-form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 5vw, 5rem);
+  background: #FFFFFF;
+}
+
+.auth-role-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 0;
+  border-radius: 0.8rem;
+  padding: 0.7rem 1rem;
+  background: transparent;
+  color: var(--color-secondary-light);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-role-button.is-active {
+  background: #FFFFFF;
+  color: var(--color-primary);
+  box-shadow: 0 6px 18px -10px rgba(30, 53, 47, 0.35);
+}
+
+@media (max-width: 900px) {
+  .auth-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-story-panel {
+    min-height: 18rem;
+    padding: 2rem 1.5rem;
+  }
+
+  .auth-story-panel h1 {
+    font-size: 2.25rem;
+  }
+
+  .auth-story-panel .grid {
+    display: none;
+  }
+
+  .auth-form-panel {
+    padding: 2.5rem 1.25rem;
+  }
+}
+
 /* ----------------------------------------------------------
    Admin sidebar: ensure it shows as flex when not hidden
    ---------------------------------------------------------- */
 #sidebar-admin:not(.hidden) {
   display: flex;
+}
+
+@media (max-width: 1023px) {
+  #sidebar-admin {
+    transform: translateX(-100%);
+    box-shadow: 20px 0 50px -20px rgba(15, 30, 26, 0.45);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  #sidebar-admin.is-open {
+    transform: translateX(0);
+  }
+
+  body.admin-drawer-open {
+    overflow: hidden;
+  }
+}
+
+@media (min-width: 1024px) {
+  #sidebar-admin {
+    transform: translateX(0);
+  }
 }
 
 /* ----------------------------------------------------------

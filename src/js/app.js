@@ -6,8 +6,11 @@ class App {
     this.navHeader = null;
     this.navMobile = null;
     this.sidebarAdmin = null;
+    this.adminMenuToggle = null;
+    this.adminSidebarBackdrop = null;
     this.cartDrawer = null;
     this.detailsModal = null;
+    this.siteFooter = null;
   }
 
   // Initialize Application
@@ -17,8 +20,11 @@ class App {
     this.navHeader = document.getElementById('nav-header');
     this.navMobile = document.getElementById('nav-mobile');
     this.sidebarAdmin = document.getElementById('sidebar-admin');
+    this.adminMenuToggle = document.getElementById('admin-menu-toggle');
+    this.adminSidebarBackdrop = document.getElementById('admin-sidebar-backdrop');
     this.cartDrawer = document.getElementById('cart-drawer');
     this.detailsModal = document.getElementById('details-modal');
+    this.siteFooter = document.getElementById('site-footer');
 
     // Subscribe to State Changes for reactive rendering
     window.store.subscribe((state) => this.render(state));
@@ -26,12 +32,29 @@ class App {
     // Load initial datasets
     await window.store.init();
 
-    // Default view
-    this.switchView('home');
+    // Restore an authenticated session or require login.
+    this.switchView(window.store.state.currentUser ? 'home' : 'login');
   }
 
   // View router
   switchView(view) {
+    const currentUser = window.store.state.currentUser;
+
+    if (view !== 'login' && !currentUser) {
+      window.store.setState({ activeView: 'login' });
+      return;
+    }
+
+    if (view.startsWith('admin-') && (!currentUser || !currentUser.isReseller)) {
+      this.showFloatingAlert('Seller Panel is available only to approved reseller accounts.', 'info');
+      window.store.setState({ activeView: currentUser ? 'home' : 'login' });
+      return;
+    }
+
+    if (view.startsWith('admin-') && window.innerWidth < 1024) {
+      this.closeAdminSidebar();
+    }
+
     window.store.setState({ activeView: view });
     
     // Auto scroll to top on page switches
@@ -67,6 +90,24 @@ class App {
 
   closeCartDrawer() {
     this.cartDrawer.classList.add('translate-x-full');
+  }
+
+  openAdminSidebar() {
+    this.sidebarAdmin.classList.add('is-open');
+    this.adminSidebarBackdrop.classList.remove('hidden');
+    document.body.classList.add('admin-drawer-open');
+  }
+
+  closeAdminSidebar() {
+    this.sidebarAdmin.classList.remove('is-open');
+    this.adminSidebarBackdrop.classList.add('hidden');
+    document.body.classList.remove('admin-drawer-open');
+  }
+
+  logout() {
+    this.closeAdminSidebar();
+    this.closeCartDrawer();
+    window.store.logout();
   }
 
   // Proxies for cart mutations
@@ -136,37 +177,64 @@ class App {
 
   // Master layout rendering engine based on activeState
   render(state) {
+    const isLogin = state.activeView === 'login';
     const isAdmin = state.activeView.startsWith('admin-');
     
     // 1. Manage visible layouts Shell
     const contentWrapper = document.getElementById('content-wrapper');
     const mainBody = document.getElementById('main-body');
 
-    if (isAdmin) {
+    if (isLogin) {
       this.navHeader.classList.add('hidden');
       this.navMobile.classList.add('hidden');
+      this.sidebarAdmin.classList.add('hidden');
+      this.sidebarAdmin.classList.remove('flex');
+      this.adminMenuToggle.classList.add('hidden');
+      this.adminMenuToggle.classList.remove('flex');
+      this.siteFooter.classList.add('hidden');
+      this.closeAdminSidebar();
+      this.closeCartDrawer();
+
+      contentWrapper.classList.remove('max-w-7xl', 'px-4', 'md:px-8', 'w-full', 'px-6', 'md:px-10');
+      contentWrapper.classList.add('w-full');
+
+      mainBody.classList.remove('pt-24', 'pt-20', 'pt-6', 'lg:pt-6', 'lg:pl-64', 'pb-24', 'lg:pb-12');
+      mainBody.classList.add('p-0');
+    } else if (isAdmin) {
+      this.navHeader.classList.add('hidden');
+      this.navMobile.classList.add('hidden');
+      this.siteFooter.classList.remove('hidden');
       this.sidebarAdmin.classList.remove('hidden');
       this.sidebarAdmin.classList.add('flex');
+      this.adminMenuToggle.classList.remove('hidden');
+      this.adminMenuToggle.classList.add('flex');
       
       contentWrapper.classList.remove('max-w-7xl', 'px-4', 'md:px-8');
       contentWrapper.classList.add('w-full', 'px-6', 'md:px-10');
       
-      mainBody.classList.remove('pt-24');
-      mainBody.classList.add('lg:pl-64', 'pt-6');
+      mainBody.classList.remove('pt-24', 'pt-6', 'p-0');
+      mainBody.classList.add('pb-24', 'lg:pb-12');
+      mainBody.classList.add('lg:pl-64', 'pt-20', 'lg:pt-6');
       
       this.updateAdminSidebarActiveLink(state.activeView);
     } else {
       this.navHeader.classList.remove('hidden');
       this.navMobile.classList.remove('hidden');
+      this.siteFooter.classList.remove('hidden');
       this.sidebarAdmin.classList.add('hidden');
       this.sidebarAdmin.classList.remove('flex');
+      this.adminMenuToggle.classList.add('hidden');
+      this.adminMenuToggle.classList.remove('flex');
+      this.closeAdminSidebar();
       
       contentWrapper.classList.remove('w-full', 'px-6', 'md:px-10');
       contentWrapper.classList.add('max-w-7xl', 'px-4', 'md:px-8');
       
-      mainBody.classList.remove('lg:pl-64', 'pt-6');
-      mainBody.classList.add('pt-24');
+      mainBody.classList.remove('lg:pl-64', 'pt-6', 'pt-20', 'lg:pt-6', 'p-0');
+      mainBody.classList.add('pt-24', 'pb-24', 'lg:pb-12');
       
+      this.updateAccountUI(state.currentUser);
+      this.updateRoleVisibility(state.currentUser);
       this.updateHeaderCartBadge(window.store.getCartCount());
       this.updateHeaderActiveLinks(state.activeView);
     }
@@ -177,6 +245,9 @@ class App {
       this.viewContainer.innerHTML = '';
       
       switch (state.activeView) {
+        case 'login':
+          window.authViews.renderLogin(this.viewContainer);
+          break;
         case 'home':
           window.customerViews.renderHome(this.viewContainer);
           break;
@@ -233,6 +304,28 @@ class App {
     });
   }
 
+  updateAccountUI(currentUser) {
+    if (!currentUser) return;
+
+    const accountName = document.getElementById('account-name');
+    const accountInitials = document.getElementById('account-initials');
+    if (accountName) accountName.textContent = currentUser.name;
+    if (accountInitials) {
+      accountInitials.textContent = currentUser.name
+        .split(' ')
+        .slice(0, 2)
+        .map(part => part.charAt(0))
+        .join('')
+        .toUpperCase();
+    }
+  }
+
+  updateRoleVisibility(currentUser) {
+    document.querySelectorAll('[data-reseller-only]').forEach(element => {
+      element.classList.toggle('hidden', !currentUser || !currentUser.isReseller);
+    });
+  }
+
   // Update admin sidebar links
   updateAdminSidebarActiveLink(activeView) {
     const links = document.querySelectorAll('[data-admin-route]');
@@ -276,6 +369,9 @@ document.addEventListener('DOMContentLoaded', () => {
   window.app.closeMealDetails     = app.closeMealDetails.bind(app);
   window.app.openCartDrawer       = app.openCartDrawer.bind(app);
   window.app.closeCartDrawer      = app.closeCartDrawer.bind(app);
+  window.app.openAdminSidebar     = app.openAdminSidebar.bind(app);
+  window.app.closeAdminSidebar    = app.closeAdminSidebar.bind(app);
+  window.app.logout               = app.logout.bind(app);
   window.app.addToCart            = app.addToCart.bind(app);
   window.app.addToCartWithFeedback = app.addToCartWithFeedback.bind(app);
   window.app.removeFromCart       = app.removeFromCart.bind(app);
