@@ -10,6 +10,16 @@ let catalogFilters = {
 };
 
 let trackOrderResult = null;
+let locationGraceTimer = null;
+
+function escapeAttribute(value) {
+  return String(value || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
+}
 
 // Dumpling customizer state
 let plannerState = {
@@ -586,7 +596,12 @@ window.customerViews = {
       if (!meal) return '';
       return `
         <div class="flex items-center gap-4 p-3.5 bg-background rounded-2xl border border-secondary/5">
-          <img src="${meal.image}" alt="${meal.mealName}" class="w-16 h-16 rounded-xl object-cover border border-secondary/10" />
+          <img
+            src="${meal.image}"
+            alt="${meal.mealName}"
+            class="w-16 h-16 flex-shrink-0 rounded-xl object-cover border border-secondary/10 bg-white"
+            onerror="this.onerror=null; this.src='assets/dumplings.gif'; this.classList.remove('object-cover'); this.classList.add('object-contain', 'p-1');"
+          />
           <div class="flex-grow min-w-0">
             <h4 class="font-display font-semibold text-sm text-primary truncate">${meal.mealName}</h4>
             <span class="text-xs text-secondary-light block mb-2">RM ${meal.price.toFixed(2)}</span>
@@ -665,7 +680,7 @@ window.customerViews = {
     }
 
     const subtotal = window.store.getCartTotal();
-    const deliveryFee = 2.00;
+    const deliveryFee = window.store.getDeliveryZone('ktf').fee;
     const total = subtotal + deliveryFee;
 
     container.innerHTML = `
@@ -692,6 +707,8 @@ window.customerViews = {
               <div class="space-y-1">
                 <label class="text-xs font-semibold text-secondary-light block">Hostel Block / Room Number (UTM JB)</label>
                 <input type="text" name="address" required placeholder="KTF Block M02, Room 304, Universiti Teknologi Malaysia" class="form-input-premium text-sm py-2.5" />
+                <input type="hidden" name="zoneId" value="ktf" />
+                <p class="text-[10px] text-secondary-light">Initial checkout uses the KTF campus delivery zone. You can correct the location briefly after ordering.</p>
               </div>
 
               <!-- Payment Method selection -->
@@ -777,8 +794,10 @@ window.customerViews = {
     const address = formData.get('address');
     const name = formData.get('name');
     const phone = formData.get('phone');
+    const payment = formData.get('payment');
+    const zoneId = formData.get('zoneId');
     
-    window.store.placeOrder({ address, name, phone });
+    window.store.placeOrder({ address, name, phone, payment, zoneId });
   },
 
   // Render Live Order Tracking page
@@ -798,6 +817,10 @@ window.customerViews = {
 
     const tracking = window.store.state.delivery.find(d => d.orderId === activeOrder.orderId);
     const meal = window.store.state.meals.find(m => m.mealId === activeOrder.mealId);
+    const locationChangeDeadline = activeOrder.locationChangeDeadline || 0;
+    const locationChangeLocked = ['out_for_delivery', 'delivered'].includes(activeOrder.status);
+    const locationChangeAvailable = !locationChangeLocked && Date.now() < locationChangeDeadline;
+    const latestAdjustment = activeOrder.lastLocationAdjustment;
 
     container.innerHTML = `
       <!-- Back Button -->
@@ -842,12 +865,39 @@ window.customerViews = {
         <aside class="space-y-6">
           <!-- Order summary -->
           <div class="glass-card rounded-[2rem] p-6 border border-secondary/15 space-y-5">
-            <h3 class="font-display font-bold text-lg text-primary border-b border-secondary/5 pb-4">Delivery Address</h3>
+            <div class="flex items-center justify-between gap-3 border-b border-secondary/5 pb-4">
+              <h3 class="font-display font-bold text-lg text-primary">Delivery Address</h3>
+              <span class="text-[10px] font-bold px-2.5 py-1 rounded-full ${locationChangeAvailable ? 'bg-accent/10 text-accent' : 'bg-secondary/10 text-secondary-light'}">
+                ${locationChangeAvailable ? 'Grace period active' : 'Location locked'}
+              </span>
+            </div>
             <div class="text-xs text-charcoal space-y-2 leading-relaxed">
               <p><strong class="text-primary">Recipient:</strong> ${tracking && tracking.details ? tracking.details.name : 'Ahmad Farhan'}</p>
               <p><strong class="text-primary">Contact:</strong> ${tracking && tracking.details ? tracking.details.phone : '+60 12-738 9201'}</p>
               <p><strong class="text-primary">Address:</strong> ${tracking && tracking.details ? tracking.details.address : 'KTF Block M02, Room 304, UTM JB'}</p>
+              <p><strong class="text-primary">Delivery Fee:</strong> RM ${(activeOrder.deliveryFee ?? 2).toFixed(2)}</p>
             </div>
+            ${locationChangeAvailable ? `
+              <div class="rounded-2xl bg-accent/5 border border-accent/15 p-3.5">
+                <div class="flex items-center justify-between gap-3 mb-2">
+                  <span class="text-[10px] uppercase tracking-wider font-bold text-accent">Fix My Delivery Location</span>
+                  <span id="location-grace-countdown" data-deadline="${locationChangeDeadline}" class="text-xs font-bold text-primary">05:00</span>
+                </div>
+                <p class="text-[10px] text-secondary-light leading-relaxed mb-3">Change your campus location before the timer ends or the courier starts delivery.</p>
+                <button onclick="window.app.openLocationChangeModal()" class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-2.5 rounded-xl transition-all cursor-pointer text-xs">
+                  Change Location
+                </button>
+              </div>
+            ` : `
+              <button onclick="window.app.showFloatingAlert('Please contact your assigned reseller for urgent location help.', 'info')" class="w-full border border-secondary/15 text-secondary hover:bg-background-dark font-semibold py-2.5 rounded-xl transition-all cursor-pointer text-xs">
+                Contact Reseller
+              </button>
+            `}
+            ${latestAdjustment ? `
+              <div class="rounded-xl bg-success/5 border border-success/15 px-3.5 py-3 text-[10px] text-success-dark leading-relaxed">
+                <strong>Latest update:</strong> ${latestAdjustment.message}
+              </div>
+            ` : ''}
           </div>
 
           <!-- Add Review Form -->
@@ -911,6 +961,182 @@ window.customerViews = {
         </aside>
       </div>
     `;
+
+    this.startLocationGraceCountdown(locationChangeDeadline);
+  },
+
+  startLocationGraceCountdown(deadline) {
+    if (locationGraceTimer) {
+      clearInterval(locationGraceTimer);
+      locationGraceTimer = null;
+    }
+
+    const countdown = document.getElementById('location-grace-countdown');
+    if (!countdown || !deadline) return;
+
+    const updateCountdown = () => {
+      if (!document.body.contains(countdown)) {
+        clearInterval(locationGraceTimer);
+        locationGraceTimer = null;
+        return;
+      }
+
+      const remaining = Math.max(0, deadline - Date.now());
+      const minutes = Math.floor(remaining / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000);
+      countdown.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+      if (remaining <= 0) {
+        clearInterval(locationGraceTimer);
+        locationGraceTimer = null;
+        const container = document.getElementById('view-container');
+        if (window.store.state.activeView === 'tracking' && container) {
+          this.renderTracking(container);
+        }
+      }
+    };
+
+    updateCountdown();
+    locationGraceTimer = setInterval(updateCountdown, 1000);
+  },
+
+  openLocationChangeModal() {
+    const activeOrder = window.store.state.activeOrder;
+    if (!activeOrder) return;
+
+    const tracking = window.store.state.delivery.find(item => item.orderId === activeOrder.orderId);
+    const deadlinePassed = Date.now() >= (activeOrder.locationChangeDeadline || 0);
+    const statusLocked = ['out_for_delivery', 'delivered'].includes(activeOrder.status);
+
+    if (deadlinePassed || statusLocked) {
+      window.app.showFloatingAlert('The location change window has closed.', 'info');
+      return;
+    }
+
+    let modal = document.getElementById('location-change-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'location-change-modal';
+      modal.className = 'location-change-modal';
+      document.body.appendChild(modal);
+    }
+
+    const currentZoneId = tracking && tracking.details && tracking.details.zoneId
+      ? tracking.details.zoneId
+      : 'ktf';
+    const currentAddress = tracking && tracking.details ? tracking.details.address : '';
+    const zones = window.store.getDeliveryZones();
+
+    modal.innerHTML = `
+      <div class="location-change-backdrop" onclick="window.app.closeLocationChangeModal()"></div>
+      <div class="location-change-panel animate-slide-up" role="dialog" aria-modal="true" aria-labelledby="location-change-title">
+        <div class="flex items-start justify-between gap-4 border-b border-secondary/10 pb-4">
+          <div>
+            <span class="text-[10px] uppercase tracking-wider font-bold text-accent">Location grace period</span>
+            <h2 id="location-change-title" class="font-display text-xl font-bold text-primary mt-1">Change Delivery Location</h2>
+            <p class="text-xs text-secondary-light mt-1">Review any fee difference before confirming.</p>
+          </div>
+          <button type="button" onclick="window.app.closeLocationChangeModal()" class="p-2 rounded-xl text-secondary-light hover:bg-background-dark cursor-pointer" aria-label="Close location editor">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <form onsubmit="event.preventDefault(); window.app.submitLocationChange(new FormData(this))" class="space-y-4 pt-5">
+          <div class="space-y-1">
+            <label class="text-xs font-semibold text-secondary-light block">Campus delivery zone</label>
+            <select name="zoneId" onchange="window.app.previewLocationFee(this.value)" class="form-input-premium text-sm" required>
+              ${zones.map(zone => `
+                <option value="${zone.id}" ${zone.id === currentZoneId ? 'selected' : ''}>${zone.name} - RM ${zone.fee.toFixed(2)}</option>
+              `).join('')}
+            </select>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-xs font-semibold text-secondary-light block">Block, room, or pickup point</label>
+            <input type="text" name="address" value="${escapeAttribute(currentAddress)}" required class="form-input-premium text-sm" placeholder="Example: KTR Block H, Main Lobby" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-xs font-semibold text-secondary-light block">Delivery note (optional)</label>
+            <input type="text" name="deliveryNote" class="form-input-premium text-sm" placeholder="Example: Message me, please do not call" />
+          </div>
+
+          <div id="location-fee-preview" class="rounded-2xl border border-secondary/10 bg-background p-4"></div>
+
+          <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-2">
+            <button type="button" onclick="window.app.closeLocationChangeModal()" class="px-5 py-3 border border-secondary/15 rounded-xl text-secondary font-semibold text-xs cursor-pointer">Keep Current Location</button>
+            <button id="confirm-location-change" type="submit" class="px-5 py-3 bg-accent hover:bg-accent-dark text-white rounded-xl font-semibold text-xs shadow-accent-glow cursor-pointer">Update Location</button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    modal.classList.add('is-open');
+    this.previewLocationFee(currentZoneId);
+  },
+
+  closeLocationChangeModal() {
+    const modal = document.getElementById('location-change-modal');
+    if (modal) modal.classList.remove('is-open');
+  },
+
+  previewLocationFee(zoneId) {
+    const activeOrder = window.store.state.activeOrder;
+    const preview = document.getElementById('location-fee-preview');
+    const button = document.getElementById('confirm-location-change');
+    if (!activeOrder || !preview || !button) return;
+
+    const zone = window.store.getDeliveryZone(zoneId);
+    const currentFee = activeOrder.deliveryFee ?? 2.00;
+    const difference = parseFloat((zone.fee - currentFee).toFixed(2));
+    const paymentMethod = activeOrder.paymentMethod || 'wallet';
+
+    let summary = '<span class="text-success-dark font-semibold">No additional delivery charge.</span>';
+    let buttonLabel = 'Update Location';
+
+    if (difference > 0 && paymentMethod === 'cash') {
+      summary = `<span class="text-accent-dark font-semibold">RM ${difference.toFixed(2)} will be added to the cash-on-delivery total.</span>`;
+      buttonLabel = `Add RM ${difference.toFixed(2)} & Update`;
+    } else if (difference > 0) {
+      summary = `<span class="text-accent-dark font-semibold">Pay an additional RM ${difference.toFixed(2)} using your original payment method.</span>`;
+      buttonLabel = `Pay RM ${difference.toFixed(2)} & Update`;
+    } else if (difference < 0) {
+      summary = `<span class="text-success-dark font-semibold">RM ${Math.abs(difference).toFixed(2)} will be returned as wallet credit.</span>`;
+      buttonLabel = 'Update & Receive Credit';
+    }
+
+    preview.innerHTML = `
+      <div class="flex items-center justify-between text-xs text-secondary-light mb-2">
+        <span>Current delivery fee</span>
+        <span>RM ${currentFee.toFixed(2)}</span>
+      </div>
+      <div class="flex items-center justify-between text-xs text-primary font-bold mb-3">
+        <span>New delivery fee</span>
+        <span>RM ${zone.fee.toFixed(2)}</span>
+      </div>
+      <div class="pt-3 border-t border-secondary/10 text-[11px] leading-relaxed">${summary}</div>
+    `;
+    button.textContent = buttonLabel;
+  },
+
+  submitLocationChange(formData) {
+    const activeOrder = window.store.state.activeOrder;
+    if (!activeOrder) return;
+
+    const result = window.store.updateDeliveryLocation(activeOrder.orderId, {
+      zoneId: formData.get('zoneId'),
+      address: formData.get('address').trim(),
+      deliveryNote: formData.get('deliveryNote').trim()
+    });
+
+    if (!result.success) {
+      window.app.showFloatingAlert(result.message, 'info');
+      this.closeLocationChangeModal();
+      return;
+    }
+
+    this.closeLocationChangeModal();
+    window.app.showFloatingAlert(`Location updated. ${result.adjustmentMessage}`, 'success');
   },
 
   renderApplyJob(container) {
@@ -1253,3 +1479,7 @@ window.app.trackOrderLookup = window.customerViews.trackOrderLookup.bind(window.
 window.app.updatePlannerQty = window.customerViews.updatePlannerQty.bind(window.customerViews);
 window.app.addCustomSteamerToCart = window.customerViews.addCustomSteamerToCart.bind(window.customerViews);
 window.app.clearTrackResult      = window.customerViews.clearTrackResult.bind(window.customerViews);
+window.app.openLocationChangeModal = window.customerViews.openLocationChangeModal.bind(window.customerViews);
+window.app.closeLocationChangeModal = window.customerViews.closeLocationChangeModal.bind(window.customerViews);
+window.app.previewLocationFee = window.customerViews.previewLocationFee.bind(window.customerViews);
+window.app.submitLocationChange = window.customerViews.submitLocationChange.bind(window.customerViews);

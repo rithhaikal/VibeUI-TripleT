@@ -80,6 +80,22 @@ class App {
     this.openCartDrawer(); // Automatically slide drawer open
   }
 
+  addToCartWithFeedback(button, mealId, qty = 1) {
+    if (!button || button.disabled) return;
+
+    button.disabled = true;
+    button.classList.add('is-added');
+    button.setAttribute('aria-label', 'Added to cart');
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const feedbackDuration = prefersReducedMotion ? 100 : 650;
+
+    window.setTimeout(() => {
+      window.store.addToCart(mealId, qty);
+      this.openCartDrawer();
+    }, feedbackDuration);
+  }
+
   removeFromCart(mealId) {
     window.store.removeFromCart(mealId);
   }
@@ -302,6 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.app.openCartDrawer       = app.openCartDrawer.bind(app);
   window.app.closeCartDrawer      = app.closeCartDrawer.bind(app);
   window.app.addToCart            = app.addToCart.bind(app);
+  window.app.addToCartWithFeedback = app.addToCartWithFeedback.bind(app);
   window.app.removeFromCart       = app.removeFromCart.bind(app);
   window.app.updateCartQuantity   = app.updateCartQuantity.bind(app);
   window.app.submitRating         = app.submitRating.bind(app);
