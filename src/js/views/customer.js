@@ -46,39 +46,91 @@ window.customerViews = {
     });
 
     container.innerHTML = `
-      <!-- Hero Banner -->
-      <section class="relative bg-primary rounded-[2rem] overflow-hidden mb-12 p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8 shadow-premium text-white">
-        <!-- White Crescent Decorative Motif in Background -->
-        <div class="absolute -right-10 -bottom-10 w-80 h-80 bg-white/5 rounded-full pointer-events-none z-0"></div>
-        <div class="absolute right-10 top-10 w-24 h-24 border-4 border-white/5 rounded-full pointer-events-none z-0"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-primary-dark/80 to-transparent z-0"></div>
-        
-        <div class="max-w-xl relative z-10 space-y-5">
-          <div class="flex items-center gap-2">
-            <span class="text-accent bg-accent/15 border border-accent/20 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">好米巴 · Chinese Muslim</span>
-            <span class="text-white bg-white/10 px-3 py-1.5 rounded-full text-xs font-semibold">KTF Alumni UTM</span>
+      <!-- ════════════════════════════════════════════════════ -->
+      <!-- FULL-SCREEN PREMIUM HERO                            -->
+      <!-- ════════════════════════════════════════════════════ -->
+      <section id="hero-section" class="hero-fullscreen" aria-label="Hot Meal Bar Hero">
+
+        <!-- Subtle radial vignette -->
+        <div class="hero-vignette" aria-hidden="true"></div>
+
+        <!-- Left content panel -->
+        <div class="hero-content-left">
+          <!-- Eyebrow label -->
+          <div class="hero-eyebrow-wrap">
+            <span class="hero-eyebrow-dot"></span>
+            <span class="hero-eyebrow-text">好米巴 · Chinese Muslim · KTF Alumni UTM</span>
           </div>
-          <h1 class="font-display text-3xl md:text-4xl lg:text-5xl text-white font-extrabold leading-tight">
-            Hand-Folded Frozen Dumplings <span class="text-accent">Delivered to Campus</span>
+
+          <!-- Headline -->
+          <h1 class="hero-headline">
+            Hand-Folded<br>
+            Frozen Dumplings<br>
+            <em>Delivered Across Campus</em>
           </h1>
-          <p class="text-secondary-light text-sm md:text-base leading-relaxed">
-            Order premium Chinese Muslim frozen dumplings prepared by Hot Meal Bar at KTF Alumni Area. Support student resellers and get them shipped directly to your hostel block!
+
+          <!-- Description -->
+          <p class="hero-description">
+            Premium Chinese Muslim frozen dumplings prepared in small batches and delivered directly to students.
           </p>
-          <div class="flex flex-wrap gap-4 pt-2">
-            <button onclick="window.app.switchView('catalog')" class="bg-accent hover:bg-accent-dark text-white font-semibold px-7 py-3.5 rounded-2xl shadow-accent-glow hover:shadow-none transition-all cursor-pointer active:scale-95 text-sm">
-              Order Dumplings Now
+
+          <!-- CTA Buttons -->
+          <div class="hero-cta-group">
+            <button
+              id="hero-btn-shop"
+              onclick="window.app.switchView('catalog')"
+              class="hero-btn-primary"
+            >
+              <span>Shop Dumplings</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
-            <button onclick="window.app.switchView('apply')" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold px-7 py-3.5 rounded-2xl transition-all cursor-pointer active:scale-95 text-sm">
+            <button
+              id="hero-btn-reseller"
+              onclick="window.app.switchView('apply')"
+              class="hero-btn-ghost"
+            >
               Become a Reseller
             </button>
           </div>
+
+          <!-- Scroll indicator -->
+          <div class="hero-scroll-indicator" aria-hidden="true">
+            <div class="scroll-indicator-line"></div>
+            <span class="scroll-indicator-label">Scroll</span>
+          </div>
         </div>
-        
-        <!-- Hero Image (Sponsor Logo beautifully displayed in premium circular tray) -->
-        <div class="relative z-10 w-full max-w-[240px] md:max-w-[280px] aspect-square rounded-[2rem] border-[6px] border-white/10 overflow-hidden shadow-2xl bg-white flex items-center justify-center p-4">
-          <img src="assets/sponsor/logo.jpeg" alt="Hot Meal Bar Logo" class="w-full h-full object-contain rounded-2xl" onerror="this.src='https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500'"/>
+
+        <!-- 3D Model Canvas -->
+        <div id="hero-3d-mount" class="hero-3d-panel" aria-label="3D Dumpling Product Display">
+          <!-- Editorial background typography behind model -->
+          <div class="hero-editorial-bg" aria-hidden="true">
+            <span class="editorial-folded">Folded</span>
+            <span class="editorial-care">with Care</span>
+          </div>
+          <canvas id="hero-canvas"></canvas>
+          <!-- Loading shimmer while GLB loads -->
+          <div class="hero-3d-loading" id="hero-3d-loading">
+            <div class="loading-ring"></div>
+          </div>
         </div>
+
+        <!-- Bottom brand strip -->
+        <div class="hero-brand-strip" aria-hidden="true">
+          <span>Premium Quality</span>
+          <span class="hero-strip-dot">·</span>
+          <span>Halal Certified</span>
+          <span class="hero-strip-dot">·</span>
+          <span>Campus Delivery</span>
+          <span class="hero-strip-dot">·</span>
+          <span>Small Batch</span>
+          <span class="hero-strip-dot">·</span>
+          <span>Hand-Folded</span>
+        </div>
+
       </section>
+
+      <!-- Below-fold content container -->
+      <div class="max-w-7xl mx-auto px-4 md:px-8 pt-12 pb-24">
 
       <!-- Signature Visual Design Element: Bamboo Steamer Plate Planner -->
       <section class="mb-12 bg-white rounded-[2rem] p-6 md:p-10 border border-secondary/10 shadow-premium">
@@ -94,8 +146,8 @@ window.customerViews = {
               <!-- Chicken Dumplings -->
               <div class="flex items-center justify-between p-3.5 bg-background rounded-2xl border border-secondary/5">
                 <div>
-                  <h4 class="font-display font-semibold text-xs text-primary">Chicken & Mushroom</h4>
-                  <span class="text-[10px] text-secondary-light">Juicy & Fragrant</span>
+                  <h4 class="font-display font-semibold text-xs text-primary">Chicken &amp; Mushroom</h4>
+                  <span class="text-[10px] text-secondary-light">Juicy &amp; Fragrant</span>
                 </div>
                 <div class="flex items-center gap-3">
                   <button onclick="window.app.updatePlannerQty('chicken', -1)" class="w-7 h-7 bg-white border border-secondary/15 rounded-lg text-primary hover:bg-background-dark flex items-center justify-center cursor-pointer text-sm font-bold active:scale-90">-</button>
@@ -108,7 +160,7 @@ window.customerViews = {
               <div class="flex items-center justify-between p-3.5 bg-background rounded-2xl border border-secondary/5">
                 <div>
                   <h4 class="font-display font-semibold text-xs text-primary">Savory Cumin Beef</h4>
-                  <span class="text-[10px] text-secondary-light">Rich & Spiced</span>
+                  <span class="text-[10px] text-secondary-light">Rich &amp; Spiced</span>
                 </div>
                 <div class="flex items-center gap-3">
                   <button onclick="window.app.updatePlannerQty('beef', -1)" class="w-7 h-7 bg-white border border-secondary/15 rounded-lg text-primary hover:bg-background-dark flex items-center justify-center cursor-pointer text-sm font-bold active:scale-90">-</button>
@@ -120,7 +172,7 @@ window.customerViews = {
               <!-- Veg Dumplings -->
               <div class="flex items-center justify-between p-3.5 bg-background rounded-2xl border border-secondary/5">
                 <div>
-                  <h4 class="font-display font-semibold text-xs text-primary">Chives & Eggs</h4>
+                  <h4 class="font-display font-semibold text-xs text-primary">Chives &amp; Eggs</h4>
                   <span class="text-[10px] text-secondary-light">Traditional Vegetarian</span>
                 </div>
                 <div class="flex items-center gap-3">
@@ -222,6 +274,8 @@ window.customerViews = {
           }).join('')}
         </div>
       </section>
+
+      </div><!-- end below-fold container -->
     `;
 
     this.renderSteamerVisual();
@@ -922,9 +976,9 @@ window.customerViews = {
                     <input type="hidden" name="rating" class="review-rating-val" value="5" required />
                     <div class="flex items-center gap-1">
                       ${[1, 2, 3, 4, 5].map(num => `
-                        <button 
-                          type="button" 
-                          onclick="window.app.setInteractiveRating(${num}, this)" 
+                        <button
+                          type="button"
+                          onclick="window.app.setInteractiveRating(${num}, this)"
                           class="star-btn text-accent hover:scale-110 transition-transform cursor-pointer focus:outline-none"
                           title="${num} Star${num > 1 ? 's' : ''}"
                         >
@@ -937,10 +991,10 @@ window.customerViews = {
                   </div>
 
                   <!-- Textarea -->
-                  <textarea 
-                    name="review" 
-                    rows="3" 
-                    placeholder="Tell us what you liked or how we can improve..." 
+                  <textarea
+                    name="review"
+                    rows="3"
+                    placeholder="Tell us what you liked or how we can improve..."
                     class="form-input-premium text-xs py-2 bg-white"
                     required
                   ></textarea>
@@ -1354,9 +1408,9 @@ window.customerViews = {
                         <input type="hidden" name="rating" class="review-rating-val" value="5" required />
                         <div class="flex items-center gap-1">
                           ${[1, 2, 3, 4, 5].map(num => `
-                            <button 
-                              type="button" 
-                              onclick="window.app.setInteractiveRating(${num}, this)" 
+                            <button
+                              type="button"
+                              onclick="window.app.setInteractiveRating(${num}, this)"
                               class="star-btn text-accent hover:scale-110 transition-transform cursor-pointer focus:outline-none"
                               title="${num} Star${num > 1 ? 's' : ''}"
                             >
@@ -1369,10 +1423,10 @@ window.customerViews = {
                       </div>
 
                       <!-- Textarea -->
-                      <textarea 
-                        name="review" 
-                        rows="3" 
-                        placeholder="Tell us what you liked or how we can improve..." 
+                      <textarea
+                        name="review"
+                        rows="3"
+                        placeholder="Tell us what you liked or how we can improve..."
                         class="form-input-premium text-xs py-2 bg-white"
                         required
                       ></textarea>
@@ -1456,7 +1510,7 @@ window.customerViews = {
     const tracking = order ? window.store.state.delivery.find(d => d.orderId === order.orderId) : null;
     const meal = order ? window.store.state.meals.find(m => m.mealId === order.mealId) : null;
     const customer = order ? window.store.state.customers.find(c => c.customerId === order.customerId) : null;
-    
+
     if (order && order.status !== 'delivered') {
       window.store.setState({ activeOrder: order, activeView: 'tracking' });
       return;

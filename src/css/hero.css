@@ -1,0 +1,452 @@
+/* ==========================================================
+   PREMIUM HERO SECTION — Full Screen Product Showcase
+   Hot Meal Bar · VibeUI 2026
+   ========================================================== */
+
+/* ── Hero layout helpers ──────────────────────────────────── */
+.hero-content-wrapper { width: 100%; }
+.hero-main { padding-top: 0 !important; }
+
+/* ── Navbar transparent / solid states ───────────────────── */
+#nav-header.nav-transparent {
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
+}
+
+#nav-header.nav-transparent.nav-scrolled {
+  background: rgba(13, 17, 23, 0.80) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(196, 154, 69, 0.12) !important;
+}
+
+#nav-header.nav-transparent .font-display {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+#nav-header.nav-transparent [data-route] {
+  color: rgba(255, 255, 255, 0.60) !important;
+}
+
+#nav-header.nav-transparent [data-route]:hover {
+  color: #C49A45 !important;
+}
+
+#nav-header.nav-transparent nav > button {
+  color: rgba(255, 255, 255, 0.60) !important;
+}
+
+#nav-header.nav-transparent nav > button:hover {
+  color: #C49A45 !important;
+}
+
+#nav-header.nav-transparent .relative.bg-background {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+#nav-header.nav-solid {
+  background: rgba(255, 255, 255, 0.93) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid rgba(122, 111, 93, 0.10) !important;
+}
+
+/* ── Hero fullscreen container ────────────────────────────── */
+.hero-fullscreen {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 680px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #0D1117;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 65% 50%, rgba(30, 53, 47, 0.45) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 80% at 20% 80%, rgba(196, 154, 69, 0.06) 0%, transparent 60%);
+}
+
+/* ── Editorial background typography ─────────────────────── */
+.hero-editorial-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* Center-align behind the 3D model */
+  overflow: hidden;
+}
+
+.editorial-folded {
+  display: block;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(80px, 18vw, 260px);
+  line-height: 0.88;
+  color: #ffffff;
+  opacity: 0.04;
+  letter-spacing: -0.02em;
+  transform: translateX(-1%);
+  white-space: nowrap;
+}
+
+.editorial-care {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: clamp(50px, 12vw, 180px);
+  line-height: 1;
+  color: #C49A45;
+  opacity: 0.045;
+  letter-spacing: -0.03em;
+  transform: translateX(10%);
+  white-space: nowrap;
+}
+
+/* ── Vignette ─────────────────────────────────────────────── */
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 100% 100% at 50% 50%,
+    transparent 30%,
+    rgba(13, 17, 23, 0.55) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Left content panel ───────────────────────────────────── */
+.hero-content-left {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 0 6vw;
+  max-width: 52%;
+  animation: heroContentIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+@keyframes heroContentIn {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Eyebrow ──────────────────────────────────────────────── */
+.hero-eyebrow-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.hero-eyebrow-dot {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #C49A45;
+  flex-shrink: 0;
+  animation: dotPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.75); }
+}
+
+.hero-eyebrow-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(196, 154, 69, 0.85);
+}
+
+/* ── Hero headline ────────────────────────────────────────── */
+.hero-headline {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: clamp(2rem, 4.5vw, 4.2rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  margin: 0;
+}
+
+.hero-headline em {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  color: #C49A45;
+  font-size: 1.05em;
+}
+
+/* ── Description ──────────────────────────────────────────── */
+.hero-description {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(0.83rem, 1.1vw, 1rem);
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.48);
+  max-width: 40ch;
+  margin: 0;
+}
+
+/* ── CTA buttons ──────────────────────────────────────────── */
+.hero-cta-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.hero-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  background: #C49A45;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.hero-btn-primary:hover {
+  background: #d4aa55;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px -6px rgba(196, 154, 69, 0.45);
+}
+
+.hero-btn-primary:active {
+  transform: scale(0.97) !important;
+  box-shadow: none;
+}
+
+.hero-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.875rem 1.75rem;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.70);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hero-btn-ghost:hover {
+  color: #ffffff;
+  border-color: rgba(196, 154, 69, 0.40);
+  background: rgba(196, 154, 69, 0.07);
+}
+
+.hero-btn-ghost:active {
+  transform: scale(0.97) !important;
+}
+
+/* ── Scroll indicator ─────────────────────────────────────── */
+.hero-scroll-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  opacity: 0.4;
+}
+
+.scroll-indicator-line {
+  width: 40px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.30);
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-indicator-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: #C49A45;
+  animation: scrollLineAnim 2s ease-in-out infinite;
+}
+
+@keyframes scrollLineAnim {
+  0%   { left: -100%; }
+  50%  { left: 0%; }
+  100% { left: 100%; }
+}
+
+.scroll-indicator-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* ── 3D panel ─────────────────────────────────────────────── */
+.hero-3d-panel {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 58%;
+  height: 100%;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-3d-panel canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── 3D Loading ring ──────────────────────────────────────── */
+.hero-3d-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  z-index: 3;
+}
+
+.hero-3d-loading.fade-out {
+  opacity: 0;
+}
+
+.loading-ring {
+  width: 36px;
+  height: 36px;
+  border: 2px solid rgba(196, 154, 69, 0.20);
+  border-top-color: #C49A45;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+/* ── Brand strip ──────────────────────────────────────────── */
+.hero-brand-strip {
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.20);
+}
+
+.hero-strip-dot {
+  color: #C49A45;
+  opacity: 0.35;
+  font-size: 0.8rem;
+}
+
+/* ==========================================================
+   HERO RESPONSIVE BREAKPOINTS
+   ========================================================== */
+
+@media (max-width: 1024px) {
+  .hero-content-left {
+    max-width: 55%;
+    padding: 0 4vw;
+  }
+  .hero-3d-panel {
+    width: 52%;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-fullscreen {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding-bottom: 2.5rem;
+  }
+  .hero-3d-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 58%;
+    z-index: 2;
+  }
+  .hero-content-left {
+    position: relative;
+    z-index: 10;
+    max-width: 100%;
+    padding: 0 1.5rem 0.5rem;
+    gap: 1rem;
+  }
+  .hero-headline {
+    font-size: clamp(1.7rem, 7vw, 2.6rem);
+  }
+  .editorial-folded {
+    font-size: clamp(60px, 18vw, 120px);
+  }
+  .editorial-care {
+    font-size: clamp(40px, 13vw, 90px);
+  }
+  .hero-brand-strip,
+  .hero-scroll-indicator {
+    display: none;
+  }
+  .hero-cta-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+  }
+  .hero-btn-primary,
+  .hero-btn-ghost {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-headline {
+    font-size: 1.55rem;
+  }
+  .hero-3d-panel {
+    height: 52%;
+  }
+}

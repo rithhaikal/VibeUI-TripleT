@@ -1,6 +1,14 @@
 // store.js - Unified Client-Side State management
 class AppStore {
   constructor() {
+    this.approvedResellers = {
+      cust_002: { resellerId: 'reseller_002', college: 'KDO' },
+      cust_003: { resellerId: 'reseller_003', college: 'KDSE' },
+      cust_005: { resellerId: 'reseller_004', college: 'KTR' },
+      cust_006: { resellerId: 'reseller_001', college: 'KTF' },
+      cust_007: { resellerId: 'reseller_005', college: 'KP' }
+    };
+
     this.deliveryZones = [
       { id: 'ktf', name: 'Kolej Tun Fatimah (KTF)', fee: 2.00 },
       { id: 'kdo', name: 'Kolej Datin Onn Jaafar (KDOJ)', fee: 3.00 },
@@ -11,7 +19,8 @@ class AppStore {
     ];
 
     this.state = {
-      activeView: 'home', // 'home' | 'catalog' | 'checkout' | 'tracking' | 'apply' | 'track-order' | 'admin-dash' | 'admin-orders' | 'admin-customers'
+      activeView: 'login', // 'login' | 'home' | 'catalog' | 'checkout' | 'tracking' | 'apply' | 'track-order' | 'admin-dash' | 'admin-orders' | 'admin-customers'
+      currentUser: null,
       meals: [],
       customers: [],
       orders: [],
@@ -55,6 +64,7 @@ class AppStore {
       this.state.orders = window.ordersData || [];
       this.state.delivery = window.deliveryData || [];
       this.state.ratings = window.ratingsData || [];
+      this.state.currentUser = this.readSessionUser();
       
       // Cart is strictly in-memory session state (no localStorage cache read)
       this.state.cart = [];
@@ -63,6 +73,77 @@ class AppStore {
     } catch (err) {
       console.error("Error loading local datasets:", err);
     }
+  }
+
+  readSessionUser() {
+    try {
+      const storedUser = window.sessionStorage.getItem('hotMealBarUser');
+      if (!storedUser) return null;
+
+      const parsedUser = JSON.parse(storedUser);
+      const customer = this.state.customers.find(item => item.customerId === parsedUser.customerId);
+      return customer ? this.buildSessionUser(customer) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  buildSessionUser(customer) {
+    const resellerProfile = this.approvedResellers[customer.customerId] || null;
+    return {
+      customerId: customer.customerId,
+      name: customer.name,
+      email: customer.email,
+      phone: customer.phone,
+      location: customer.location,
+      isReseller: Boolean(resellerProfile),
+      resellerId: resellerProfile ? resellerProfile.resellerId : null,
+      resellerCollege: resellerProfile ? resellerProfile.college : null
+    };
+  }
+
+  authenticate(email, password, requestedRole = 'customer') {
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+    const customer = this.state.customers.find(item => item.email.toLowerCase() === normalizedEmail);
+
+    if (!customer || password !== 'utm123') {
+      return { success: false, message: 'Incorrect email or password.' };
+    }
+
+    const resellerProfile = this.approvedResellers[customer.customerId] || null;
+    if (requestedRole === 'reseller' && !resellerProfile) {
+      return {
+        success: false,
+        message: 'This student account is not registered as an approved reseller.'
+      };
+    }
+
+    const currentUser = this.buildSessionUser(customer);
+
+    try {
+      window.sessionStorage.setItem('hotMealBarUser', JSON.stringify(currentUser));
+    } catch (error) {
+      // Session persistence is optional in restricted browser environments.
+    }
+
+    this.setState({ currentUser, activeView: 'home' });
+    return { success: true, user: currentUser };
+  }
+
+  logout() {
+    try {
+      window.sessionStorage.removeItem('hotMealBarUser');
+    } catch (error) {
+      // Continue with in-memory logout if session storage is unavailable.
+    }
+
+    this.setState({
+      currentUser: null,
+      activeView: 'login',
+      cart: [],
+      activeOrder: null,
+      selectedMealId: null
+    });
   }
 
   // --- Cart Actions ---
@@ -144,7 +225,7 @@ class AppStore {
     // Create new order record
     const newOrder = {
       orderId,
-      customerId: 'cust_001', // Ahmad Farhan
+      customerId: this.state.currentUser ? this.state.currentUser.customerId : 'cust_001',
       mealId: cart[0].mealId, // Main item reference
       quantity: totalQty,
       amount: totalAmount,
@@ -326,7 +407,7 @@ class AppStore {
   addReview(orderId, mealId, rating, reviewText) {
     const newRating = {
       ratingId: `rate_${randomId(9100, 9999)}`,
-      customerId: 'cust_001',
+      customerId: this.state.currentUser ? this.state.currentUser.customerId : 'cust_001',
       mealId,
       rating: parseInt(rating),
       review: reviewText
@@ -341,9 +422,9 @@ class AppStore {
     );
 
     const ratings = [newRating, ...this.state.ratings];
-    
+
     // Mark the order as reviewed
-    const orders = this.state.orders.map(o => 
+    const orders = this.state.orders.map(o =>
       o.orderId === orderId ? { ...o, reviewed: true } : o
     );
 
