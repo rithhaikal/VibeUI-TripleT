@@ -1,8 +1,26 @@
 // store.js - Unified Client-Side State management
 class AppStore {
   constructor() {
+    this.approvedResellers = {
+      cust_002: { resellerId: 'reseller_002', college: 'KDO' },
+      cust_003: { resellerId: 'reseller_003', college: 'KDSE' },
+      cust_005: { resellerId: 'reseller_004', college: 'KTR' },
+      cust_006: { resellerId: 'reseller_001', college: 'KTF' },
+      cust_007: { resellerId: 'reseller_005', college: 'KP' }
+    };
+
+    this.deliveryZones = [
+      { id: 'ktf', name: 'Kolej Tun Fatimah (KTF)', fee: 2.00 },
+      { id: 'kdo', name: 'Kolej Datin Onn Jaafar (KDOJ)', fee: 3.00 },
+      { id: 'kdse', name: 'Kolej Dato Seri Endon (KDSE)', fee: 3.00 },
+      { id: 'ktr', name: 'Kolej Tun Razak (KTR)', fee: 4.00 },
+      { id: 'kp', name: 'Kolej Perdana (KP)', fee: 4.00 },
+      { id: 'campus', name: 'UTM Campus Landmark', fee: 3.00 }
+    ];
+
     this.state = {
-      activeView: 'home', // 'home' | 'catalog' | 'checkout' | 'tracking' | 'apply' | 'track-order' | 'admin-dash' | 'admin-orders' | 'admin-customers'
+      activeView: 'login', // 'login' | 'home' | 'catalog' | 'checkout' | 'tracking' | 'apply' | 'track-order' | 'admin-dash' | 'admin-orders' | 'admin-customers'
+      currentUser: null,
       meals: [],
       customers: [],
       orders: [],
@@ -46,6 +64,7 @@ class AppStore {
       this.state.orders = window.ordersData || [];
       this.state.delivery = window.deliveryData || [];
       this.state.ratings = window.ratingsData || [];
+      this.state.currentUser = this.readSessionUser();
       
       // Cart is strictly in-memory session state (no localStorage cache read)
       this.state.cart = [];
@@ -54,6 +73,77 @@ class AppStore {
     } catch (err) {
       console.error("Error loading local datasets:", err);
     }
+  }
+
+  readSessionUser() {
+    try {
+      const storedUser = window.sessionStorage.getItem('hotMealBarUser');
+      if (!storedUser) return null;
+
+      const parsedUser = JSON.parse(storedUser);
+      const customer = this.state.customers.find(item => item.customerId === parsedUser.customerId);
+      return customer ? this.buildSessionUser(customer) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  buildSessionUser(customer) {
+    const resellerProfile = this.approvedResellers[customer.customerId] || null;
+    return {
+      customerId: customer.customerId,
+      name: customer.name,
+      email: customer.email,
+      phone: customer.phone,
+      location: customer.location,
+      isReseller: Boolean(resellerProfile),
+      resellerId: resellerProfile ? resellerProfile.resellerId : null,
+      resellerCollege: resellerProfile ? resellerProfile.college : null
+    };
+  }
+
+  authenticate(email, password, requestedRole = 'customer') {
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+    const customer = this.state.customers.find(item => item.email.toLowerCase() === normalizedEmail);
+
+    if (!customer || password !== 'utm123') {
+      return { success: false, message: 'Incorrect email or password.' };
+    }
+
+    const resellerProfile = this.approvedResellers[customer.customerId] || null;
+    if (requestedRole === 'reseller' && !resellerProfile) {
+      return {
+        success: false,
+        message: 'This student account is not registered as an approved reseller.'
+      };
+    }
+
+    const currentUser = this.buildSessionUser(customer);
+
+    try {
+      window.sessionStorage.setItem('hotMealBarUser', JSON.stringify(currentUser));
+    } catch (error) {
+      // Session persistence is optional in restricted browser environments.
+    }
+
+    this.setState({ currentUser, activeView: 'home' });
+    return { success: true, user: currentUser };
+  }
+
+  logout() {
+    try {
+      window.sessionStorage.removeItem('hotMealBarUser');
+    } catch (error) {
+      // Continue with in-memory logout if session storage is unavailable.
+    }
+
+    this.setState({
+      currentUser: null,
+      activeView: 'login',
+      cart: [],
+      activeOrder: null,
+      selectedMealId: null
+    });
   }
 
   // --- Cart Actions ---
@@ -107,6 +197,14 @@ class AppStore {
     return this.state.cart.reduce((sum, item) => sum + item.quantity, 0);
   }
 
+  getDeliveryZones() {
+    return this.deliveryZones.map(zone => ({ ...zone }));
+  }
+
+  getDeliveryZone(zoneId) {
+    return this.deliveryZones.find(zone => zone.id === zoneId) || this.deliveryZones[0];
+  }
+
   // --- Checkout and Simulated Order Tracking ---
   placeOrder(addressDetails) {
     const orderId = `ord_${randomId(1000, 9999)}`;
@@ -117,16 +215,24 @@ class AppStore {
 
     // Calculate total quantity and amount
     const totalQty = cart.reduce((s, i) => s + i.quantity, 0);
-    const totalAmount = parseFloat(this.getCartTotal().toFixed(2));
+    const subtotal = parseFloat(this.getCartTotal().toFixed(2));
+    const deliveryZone = this.getDeliveryZone(addressDetails.zoneId || 'ktf');
+    const deliveryFee = deliveryZone.fee;
+    const totalAmount = parseFloat((subtotal + deliveryFee).toFixed(2));
     const commission = parseFloat((totalQty * 3.00).toFixed(2)); // RM 3.00 commission per pack
+    const locationChangeDeadline = Date.now() + (5 * 60 * 1000);
 
     // Create new order record
     const newOrder = {
       orderId,
-      customerId: 'cust_001', // Ahmad Farhan
+      customerId: this.state.currentUser ? this.state.currentUser.customerId : 'cust_001',
       mealId: cart[0].mealId, // Main item reference
       quantity: totalQty,
       amount: totalAmount,
+      subtotal,
+      deliveryFee,
+      paymentMethod: addressDetails.payment || 'wallet',
+      locationChangeDeadline,
       commission: commission,
       status: 'received',
       orderDate: new Date().toISOString(),
@@ -142,7 +248,12 @@ class AppStore {
       estimatedTime: new Date(Date.now() + 30 * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       driverName: 'Muhammad Harith',
       driverPhone: '+60 18-923 8847',
-      details: addressDetails
+      details: {
+        ...addressDetails,
+        zoneId: deliveryZone.id,
+        zoneName: deliveryZone.name
+      },
+      locationHistory: []
     };
 
     // Update memory cache
@@ -156,6 +267,95 @@ class AppStore {
 
     // Start simulation timer
     this.startOrderSimulation(orderId);
+  }
+
+  updateDeliveryLocation(orderId, locationDetails) {
+    const order = this.state.orders.find(item => item.orderId === orderId);
+    const trackingRecord = this.state.delivery.find(item => item.orderId === orderId);
+
+    if (!order || !trackingRecord) {
+      return { success: false, message: 'Order delivery details could not be found.' };
+    }
+
+    const deadline = order.locationChangeDeadline || 0;
+    const lockedByStatus = ['out_for_delivery', 'delivered'].includes(order.status);
+    if (Date.now() >= deadline || lockedByStatus) {
+      return { success: false, message: 'The location change window has closed.' };
+    }
+
+    const newZone = this.getDeliveryZone(locationDetails.zoneId);
+    const previousFee = order.deliveryFee ?? 2.00;
+    const feeDifference = parseFloat((newZone.fee - previousFee).toFixed(2));
+    const paymentMethod = order.paymentMethod || 'wallet';
+
+    let adjustmentType = 'no_change';
+    let adjustmentMessage = 'No delivery fee change.';
+    let walletCredit = order.walletCredit || 0;
+
+    if (feeDifference > 0 && paymentMethod === 'cash') {
+      adjustmentType = 'cod_due';
+      adjustmentMessage = `RM ${feeDifference.toFixed(2)} added to your cash-on-delivery total.`;
+    } else if (feeDifference > 0) {
+      adjustmentType = 'paid';
+      adjustmentMessage = `Additional RM ${feeDifference.toFixed(2)} paid using your selected payment method.`;
+    } else if (feeDifference < 0) {
+      const credit = Math.abs(feeDifference);
+      adjustmentType = 'wallet_credit';
+      walletCredit = parseFloat((walletCredit + credit).toFixed(2));
+      adjustmentMessage = `RM ${credit.toFixed(2)} returned as Hot Meal Bar wallet credit.`;
+    }
+
+    const previousAddress = trackingRecord.details ? trackingRecord.details.address : '';
+    const changedAt = new Date().toISOString();
+    const amount = parseFloat(((order.subtotal ?? (order.amount - previousFee)) + newZone.fee).toFixed(2));
+
+    const orders = this.state.orders.map(item => item.orderId === orderId ? {
+      ...item,
+      amount,
+      deliveryFee: newZone.fee,
+      walletCredit,
+      lastLocationAdjustment: {
+        type: adjustmentType,
+        difference: feeDifference,
+        message: adjustmentMessage,
+        changedAt
+      }
+    } : item);
+
+    const delivery = this.state.delivery.map(item => item.orderId === orderId ? {
+      ...item,
+      details: {
+        ...item.details,
+        address: locationDetails.address,
+        deliveryNote: locationDetails.deliveryNote || '',
+        zoneId: newZone.id,
+        zoneName: newZone.name
+      },
+      locationHistory: [
+        ...(item.locationHistory || []),
+        {
+          previousAddress,
+          newAddress: locationDetails.address,
+          previousFee,
+          newFee: newZone.fee,
+          changedAt
+        }
+      ]
+    } : item);
+
+    const activeOrder = this.state.activeOrder && this.state.activeOrder.orderId === orderId
+      ? orders.find(item => item.orderId === orderId)
+      : this.state.activeOrder;
+
+    this.setState({ orders, delivery, activeOrder });
+
+    return {
+      success: true,
+      adjustmentType,
+      adjustmentMessage,
+      feeDifference,
+      newFee: newZone.fee
+    };
   }
 
   startOrderSimulation(orderId) {
@@ -204,10 +404,10 @@ class AppStore {
     this.setState({ meals });
   }
 
-  addReview(mealId, rating, reviewText) {
+  addReview(orderId, mealId, rating, reviewText) {
     const newRating = {
       ratingId: `rate_${randomId(9100, 9999)}`,
-      customerId: 'cust_001',
+      customerId: this.state.currentUser ? this.state.currentUser.customerId : 'cust_001',
       mealId,
       rating: parseInt(rating),
       review: reviewText
@@ -222,7 +422,13 @@ class AppStore {
     );
 
     const ratings = [newRating, ...this.state.ratings];
-    this.setState({ ratings, meals });
+
+    // Mark the order as reviewed
+    const orders = this.state.orders.map(o =>
+      o.orderId === orderId ? { ...o, reviewed: true } : o
+    );
+
+    this.setState({ ratings, meals, orders });
   }
 }
 

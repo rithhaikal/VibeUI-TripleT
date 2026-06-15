@@ -117,6 +117,89 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--shadow-premium-hover);
 }
 
+/* Meal card add-to-cart confirmation */
+.meal-card-add-button {
+  position: relative;
+  width: 2.75rem;
+  height: 2.75rem;
+  overflow: hidden;
+  border: 0;
+  border-radius: 1rem;
+  background: var(--color-accent);
+  color: #FFFFFF;
+  box-shadow: var(--shadow-accent-glow);
+  cursor: pointer;
+  transition:
+    width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.2s ease;
+}
+
+.meal-card-add-button:hover {
+  background: var(--color-accent-dark);
+  box-shadow: none;
+}
+
+.meal-card-add-button:disabled {
+  cursor: default;
+}
+
+.meal-card-add-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  transition:
+    opacity 0.2s ease,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.meal-card-add-icon-check {
+  left: 1.4rem;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.35) rotate(-20deg);
+}
+
+.meal-card-add-label {
+  position: absolute;
+  top: 50%;
+  left: 2.65rem;
+  opacity: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transform: translateY(-50%) translateX(0.5rem);
+  transition:
+    opacity 0.2s ease 0.08s,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.08s;
+}
+
+.meal-card-add-button.is-added {
+  width: 5.75rem;
+  background: var(--color-success);
+  box-shadow: 0 8px 20px -6px rgba(61, 139, 111, 0.35);
+}
+
+.meal-card-add-button.is-added .meal-card-add-icon-plus {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.35) rotate(90deg);
+}
+
+.meal-card-add-button.is-added .meal-card-add-icon-check {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1) rotate(0);
+}
+
+.meal-card-add-button.is-added .meal-card-add-label {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
 /* Premium form inputs */
 .form-input-premium {
   width: 100%;
@@ -238,11 +321,153 @@ h1, h2, h3, h4, h5, h6 {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Delivery location grace-period dialog */
+.location-change-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.location-change-modal.is-open {
+  display: flex;
+}
+
+.location-change-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 30, 26, 0.62);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  animation: fadeIn 0.2s ease-out both;
+}
+
+.location-change-panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 34rem);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  border: 1px solid rgba(122, 111, 93, 0.15);
+  border-radius: 2rem;
+  background: #FFFFFF;
+  padding: 1.5rem;
+  box-shadow: 0 30px 80px -24px rgba(15, 30, 26, 0.45);
+}
+
+/* Login */
+.auth-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(28rem, 0.95fr);
+  background: #FFFFFF;
+}
+
+.auth-story-panel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: clamp(2rem, 6vw, 6rem);
+  background:
+    radial-gradient(circle at 85% 15%, rgba(196, 154, 69, 0.22), transparent 25%),
+    linear-gradient(145deg, #0F1E1A 0%, #1E352F 55%, #2D4F46 100%);
+}
+
+.auth-story-panel::after {
+  content: '';
+  position: absolute;
+  width: 28rem;
+  height: 28rem;
+  right: -10rem;
+  bottom: -12rem;
+  border: 4rem solid rgba(255, 255, 255, 0.035);
+  border-radius: 50%;
+}
+
+.auth-form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 5vw, 5rem);
+  background: #FFFFFF;
+}
+
+.auth-role-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 0;
+  border-radius: 0.8rem;
+  padding: 0.7rem 1rem;
+  background: transparent;
+  color: var(--color-secondary-light);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-role-button.is-active {
+  background: #FFFFFF;
+  color: var(--color-primary);
+  box-shadow: 0 6px 18px -10px rgba(30, 53, 47, 0.35);
+}
+
+@media (max-width: 900px) {
+  .auth-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-story-panel {
+    min-height: 18rem;
+    padding: 2rem 1.5rem;
+  }
+
+  .auth-story-panel h1 {
+    font-size: 2.25rem;
+  }
+
+  .auth-story-panel .grid {
+    display: none;
+  }
+
+  .auth-form-panel {
+    padding: 2.5rem 1.25rem;
+  }
+}
+
 /* ----------------------------------------------------------
    Admin sidebar: ensure it shows as flex when not hidden
    ---------------------------------------------------------- */
 #sidebar-admin:not(.hidden) {
   display: flex;
+}
+
+@media (max-width: 1023px) {
+  #sidebar-admin {
+    transform: translateX(-100%);
+    box-shadow: 20px 0 50px -20px rgba(15, 30, 26, 0.45);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  #sidebar-admin.is-open {
+    transform: translateX(0);
+  }
+
+  body.admin-drawer-open {
+    overflow: hidden;
+  }
+}
+
+@media (min-width: 1024px) {
+  #sidebar-admin {
+    transform: translateX(0);
+  }
 }
 
 /* ----------------------------------------------------------
@@ -284,6 +509,14 @@ input[type="checkbox"] {
    ---------------------------------------------------------- */
 button:active {
   transform: scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meal-card-add-button,
+  .meal-card-add-icon,
+  .meal-card-add-label {
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* ----------------------------------------------------------
