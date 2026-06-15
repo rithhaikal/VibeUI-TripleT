@@ -1,0 +1,748 @@
+[
+  {
+    "mealId": "meal_001",
+    "mealName": "Truffle Wild Mushroom Bruschetta",
+    "category": "Starters",
+    "price": 14.01,
+    "rating": 4.4,
+    "image": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 31,
+    "description": "A light, beautifully presented appetizer prepared with fresh seasonal ingredients. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_002",
+    "mealName": "Crispy Calamari with Garlic Aioli",
+    "category": "Starters",
+    "price": 13.88,
+    "rating": 4.8,
+    "image": "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 12,
+    "description": "A light, beautifully presented appetizer prepared with fresh seasonal ingredients. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_003",
+    "mealName": "Burrata with Heirloom Tomatoes",
+    "category": "Starters",
+    "price": 11.51,
+    "rating": 4.2,
+    "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 33,
+    "description": "A light, beautifully presented appetizer prepared with fresh seasonal ingredients. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_004",
+    "mealName": "Seared Sea Scallops",
+    "category": "Starters",
+    "price": 11.09,
+    "rating": 4.6,
+    "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 25,
+    "description": "A light, beautifully presented appetizer prepared with fresh seasonal ingredients. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_005",
+    "mealName": "Stuffed Zucchini Flowers",
+    "category": "Starters",
+    "price": 10.22,
+    "rating": 4.3,
+    "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 27,
+    "description": "A light, beautifully presented appetizer prepared with fresh seasonal ingredients. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_006",
+    "mealName": "Artisan Cheese & Charcuterie Platter",
+    "category": "Starters",
+    "price": 15.33,
+    "rating": 4.4,
+    "image": "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 25,
+    "description": "A light, beautifully presented appetizer prepared with fresh seasonal ingredients. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_007",
+    "mealName": "Sweet Potato Croquettes",
+    "category": "Starters",
+    "price": 10.56,
+    "rating": 4.7,
+    "image": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 13,
+    "description": "A light, beautifully presented appetizer prepared with fresh seasonal ingredients. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_008",
+    "mealName": "Spiced Pumpkin Soup",
+    "category": "Starters",
+    "price": 12.01,
+    "rating": 4.5,
+    "image": "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 13,
+    "description": "A light, beautifully presented appetizer prepared with fresh seasonal ingredients. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_009",
+    "mealName": "Slow-Braised Beef Short Ribs",
+    "category": "Mains",
+    "price": 37.29,
+    "rating": 4.2,
+    "image": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 27,
+    "description": "A hearty, slow-cooked or pan-seared main dish prepared to perfection by our head chef. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_010",
+    "mealName": "Pan-Seared Duck Breast with Cherry Port Sauce",
+    "category": "Mains",
+    "price": 25.89,
+    "rating": 4.8,
+    "image": "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 32,
+    "description": "A hearty, slow-cooked or pan-seared main dish prepared to perfection by our head chef. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_011",
+    "mealName": "Herb-Crusted Rack of Lamb",
+    "category": "Mains",
+    "price": 24.27,
+    "rating": 4.2,
+    "image": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 28,
+    "description": "A hearty, slow-cooked or pan-seared main dish prepared to perfection by our head chef. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_012",
+    "mealName": "Filet Mignon with Chimichurri",
+    "category": "Mains",
+    "price": 24.2,
+    "rating": 4.7,
+    "image": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 11,
+    "description": "A hearty, slow-cooked or pan-seared main dish prepared to perfection by our head chef. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_013",
+    "mealName": "Free-Range Chicken Ballotine",
+    "category": "Mains",
+    "price": 34.83,
+    "rating": 4.2,
+    "image": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 10,
+    "description": "A hearty, slow-cooked or pan-seared main dish prepared to perfection by our head chef. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_014",
+    "mealName": "Smoked Pork Belly with Apple Puree",
+    "category": "Mains",
+    "price": 31.51,
+    "rating": 4.4,
+    "image": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 24,
+    "description": "A hearty, slow-cooked or pan-seared main dish prepared to perfection by our head chef. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_015",
+    "mealName": "Truffle Butter Tagliatelle",
+    "category": "Mains",
+    "price": 26.11,
+    "rating": 4.9,
+    "image": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 31,
+    "description": "A hearty, slow-cooked or pan-seared main dish prepared to perfection by our head chef. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_016",
+    "mealName": "Venison Loin with Roasted Root Vegetables",
+    "category": "Mains",
+    "price": 19.95,
+    "rating": 4.1,
+    "image": "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 15,
+    "description": "A hearty, slow-cooked or pan-seared main dish prepared to perfection by our head chef. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_017",
+    "mealName": "Pan-Seared Salmon with Herb Crust",
+    "category": "Seafood",
+    "price": 40.88,
+    "rating": 4.2,
+    "image": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 23,
+    "description": "Freshly caught seafood prepared with fine herbs, premium oils, and citrus zests. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_018",
+    "mealName": "Chilean Sea Bass in Miso Broth",
+    "category": "Seafood",
+    "price": 24.27,
+    "rating": 4.4,
+    "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 31,
+    "description": "Freshly caught seafood prepared with fine herbs, premium oils, and citrus zests. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_019",
+    "mealName": "Grilled Tiger Prawns with Lemon Garlic Butter",
+    "category": "Seafood",
+    "price": 25.98,
+    "rating": 4.2,
+    "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 15,
+    "description": "Freshly caught seafood prepared with fine herbs, premium oils, and citrus zests. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_020",
+    "mealName": "Lobster Thermidor",
+    "category": "Seafood",
+    "price": 39.86,
+    "rating": 4.2,
+    "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 32,
+    "description": "Freshly caught seafood prepared with fine herbs, premium oils, and citrus zests. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_021",
+    "mealName": "Bouillabaisse Marseillaise",
+    "category": "Seafood",
+    "price": 30.19,
+    "rating": 4.2,
+    "image": "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 13,
+    "description": "Freshly caught seafood prepared with fine herbs, premium oils, and citrus zests. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_022",
+    "mealName": "Seafood Risotto Nero",
+    "category": "Seafood",
+    "price": 24.94,
+    "rating": 4.7,
+    "image": "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 18,
+    "description": "Freshly caught seafood prepared with fine herbs, premium oils, and citrus zests. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_023",
+    "mealName": "Crispy Skin Barramundi",
+    "category": "Seafood",
+    "price": 29.16,
+    "rating": 4.8,
+    "image": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 20,
+    "description": "Freshly caught seafood prepared with fine herbs, premium oils, and citrus zests. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_024",
+    "mealName": "Octopus Carpaccio with Citrus Dressing",
+    "category": "Seafood",
+    "price": 35.24,
+    "rating": 4.5,
+    "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 18,
+    "description": "Freshly caught seafood prepared with fine herbs, premium oils, and citrus zests. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_025",
+    "mealName": "Wild Mushroom & Truffle Risotto",
+    "category": "Vegetarian",
+    "price": 18.88,
+    "rating": 4.2,
+    "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 14,
+    "description": "A nutrient-dense, flavorful vegetarian delight celebrating fresh garden produce. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_026",
+    "mealName": "Roasted Butternut Squash Wellington",
+    "category": "Vegetarian",
+    "price": 20.02,
+    "rating": 4.6,
+    "image": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 26,
+    "description": "A nutrient-dense, flavorful vegetarian delight celebrating fresh garden produce. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_027",
+    "mealName": "Eggplant Parmigiana Stack",
+    "category": "Vegetarian",
+    "price": 21.24,
+    "rating": 4.5,
+    "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 12,
+    "description": "A nutrient-dense, flavorful vegetarian delight celebrating fresh garden produce. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_028",
+    "mealName": "Quinoa and Roasted Vegetable Bowl",
+    "category": "Vegetarian",
+    "price": 21.94,
+    "rating": 4.3,
+    "image": "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 15,
+    "description": "A nutrient-dense, flavorful vegetarian delight celebrating fresh garden produce. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_029",
+    "mealName": "Miso Glazed Tofu with Bok Choy",
+    "category": "Vegetarian",
+    "price": 20.81,
+    "rating": 4.7,
+    "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 34,
+    "description": "A nutrient-dense, flavorful vegetarian delight celebrating fresh garden produce. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_030",
+    "mealName": "Spinach & Ricotta Gnocchi",
+    "category": "Vegetarian",
+    "price": 18.08,
+    "rating": 4.9,
+    "image": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 18,
+    "description": "A nutrient-dense, flavorful vegetarian delight celebrating fresh garden produce. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_031",
+    "mealName": "Mediterranean Falafel Platter",
+    "category": "Vegetarian",
+    "price": 16.15,
+    "rating": 4.3,
+    "image": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 18,
+    "description": "A nutrient-dense, flavorful vegetarian delight celebrating fresh garden produce. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_032",
+    "mealName": "Spiced Cauliflower Steak",
+    "category": "Vegetarian",
+    "price": 19.59,
+    "rating": 4.8,
+    "image": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 11,
+    "description": "A nutrient-dense, flavorful vegetarian delight celebrating fresh garden produce. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_033",
+    "mealName": "Dark Chocolate Fondant",
+    "category": "Desserts",
+    "price": 8.43,
+    "rating": 4.8,
+    "image": "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 13,
+    "description": "A premium sweet finish combining decadent chocolate, rich cream, or fresh summer fruits. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_034",
+    "mealName": "Madagascar Vanilla Crème Brûlée",
+    "category": "Desserts",
+    "price": 14.6,
+    "rating": 4.2,
+    "image": "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 33,
+    "description": "A premium sweet finish combining decadent chocolate, rich cream, or fresh summer fruits. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_035",
+    "mealName": "Warm Apple & Blackberry Tart",
+    "category": "Desserts",
+    "price": 12.26,
+    "rating": 4.2,
+    "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 13,
+    "description": "A premium sweet finish combining decadent chocolate, rich cream, or fresh summer fruits. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_036",
+    "mealName": "Classic Tiramisu Classico",
+    "category": "Desserts",
+    "price": 11.56,
+    "rating": 4.3,
+    "image": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 20,
+    "description": "A premium sweet finish combining decadent chocolate, rich cream, or fresh summer fruits. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_037",
+    "mealName": "Salted Caramel Soufflé",
+    "category": "Desserts",
+    "price": 12.94,
+    "rating": 4.1,
+    "image": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 34,
+    "description": "A premium sweet finish combining decadent chocolate, rich cream, or fresh summer fruits. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_038",
+    "mealName": "Artisanal Gelato Selection",
+    "category": "Desserts",
+    "price": 12.09,
+    "rating": 4.9,
+    "image": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 21,
+    "description": "A premium sweet finish combining decadent chocolate, rich cream, or fresh summer fruits. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_039",
+    "mealName": "Matcha Mille-Feuille",
+    "category": "Desserts",
+    "price": 10.4,
+    "rating": 4.4,
+    "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 32,
+    "description": "A premium sweet finish combining decadent chocolate, rich cream, or fresh summer fruits. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_040",
+    "mealName": "Deconstructed Lemon Meringue Pie",
+    "category": "Desserts",
+    "price": 8.55,
+    "rating": 4.7,
+    "image": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 15,
+    "description": "A premium sweet finish combining decadent chocolate, rich cream, or fresh summer fruits. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_041",
+    "mealName": "Pressed Green Juice",
+    "category": "Beverages",
+    "price": 4.12,
+    "rating": 4.3,
+    "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 10,
+    "description": "An organic, freshly brewed or cold-pressed refreshment to perfectly pair with your meal. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_042",
+    "mealName": "Hibiscus Iced Herbal Infusion",
+    "category": "Beverages",
+    "price": 8.43,
+    "rating": 4.7,
+    "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 23,
+    "description": "An organic, freshly brewed or cold-pressed refreshment to perfectly pair with your meal. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_043",
+    "mealName": "Espresso Macchiato",
+    "category": "Beverages",
+    "price": 8.31,
+    "rating": 4.6,
+    "image": "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 17,
+    "description": "An organic, freshly brewed or cold-pressed refreshment to perfectly pair with your meal. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_044",
+    "mealName": "Sparkling Elderflower Pressé",
+    "category": "Beverages",
+    "price": 4.69,
+    "rating": 4.2,
+    "image": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 13,
+    "description": "An organic, freshly brewed or cold-pressed refreshment to perfectly pair with your meal. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_045",
+    "mealName": "Craft Ginger Beer",
+    "category": "Beverages",
+    "price": 6.38,
+    "rating": 4.5,
+    "image": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 31,
+    "description": "An organic, freshly brewed or cold-pressed refreshment to perfectly pair with your meal. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_046",
+    "mealName": "Cold Brew Nitro Coffee",
+    "category": "Beverages",
+    "price": 5.75,
+    "rating": 4.5,
+    "image": "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 19,
+    "description": "An organic, freshly brewed or cold-pressed refreshment to perfectly pair with your meal. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_047",
+    "mealName": "Fresh Passionfruit Lemonade",
+    "category": "Beverages",
+    "price": 8.27,
+    "rating": 4.8,
+    "image": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 16,
+    "description": "An organic, freshly brewed or cold-pressed refreshment to perfectly pair with your meal. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_048",
+    "mealName": "Earl Grey Lavender Tea",
+    "category": "Beverages",
+    "price": 7.43,
+    "rating": 4.8,
+    "image": "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 30,
+    "description": "An organic, freshly brewed or cold-pressed refreshment to perfectly pair with your meal. Served with premium side elements.",
+    "ingredients": [
+      "Organic Seasonings",
+      "Extra Virgin Olive Oil",
+      "Select Local Produce"
+    ]
+  },
+  {
+    "mealId": "meal_049",
+    "mealName": "Special Extra Desserts Dish",
+    "category": "Desserts",
+    "price": 17.04,
+    "rating": 4.4,
+    "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 28,
+    "description": "A delicious house specialty.",
+    "ingredients": [
+      "Chef's Secret Blend"
+    ]
+  },
+  {
+    "mealId": "meal_050",
+    "mealName": "Special Extra Mains Dish",
+    "category": "Mains",
+    "price": 22.11,
+    "rating": 4.4,
+    "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80",
+    "prepTime": 27,
+    "description": "A delicious house specialty.",
+    "ingredients": [
+      "Chef's Secret Blend"
+    ]
+  }
+]
