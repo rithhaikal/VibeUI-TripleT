@@ -185,6 +185,12 @@ h1, h2, h3, h4, h5, h6 {
   to { transform: rotate(360deg); }
 }
 
+@keyframes dumplingBounce {
+  0%, 100% { transform: translateY(0) scale(1);    }
+  40%       { transform: translateY(-10px) scale(1.06); }
+  60%       { transform: translateY(-6px) scale(1.03);  }
+}
+
 /* Animation utility classes */
 .animate-slide-up {
   animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -196,6 +202,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+.dumpling-bounce {
+  animation: dumplingBounce 1.2s ease-in-out infinite;
 }
 
 /* Skeleton / shimmer loading state */

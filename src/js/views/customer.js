@@ -872,12 +872,7 @@ window.customerViews = {
             </div>
           ` : `
             <div class="glass-card rounded-[2rem] p-6 border border-secondary/15 text-center py-8">
-              <div class="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center text-accent mx-auto mb-3">
-                <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              </div>
+              <img src="assets/dumplings.gif" alt="Preparing order..." class="w-16 h-16 object-contain mx-auto mb-3 dumpling-bounce" />
               <h4 class="font-display font-semibold text-sm text-primary mb-1">Preparing & Shipping</h4>
               <p class="text-[10px] text-secondary-light">Review submission unlocks automatically upon delivery confirmation.</p>
             </div>
