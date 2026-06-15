@@ -102,11 +102,6 @@ window.customerViews = {
 
         <!-- 3D Model Canvas -->
         <div id="hero-3d-mount" class="hero-3d-panel" aria-label="3D Dumpling Product Display">
-          <!-- Editorial background typography behind model -->
-          <div class="hero-editorial-bg" aria-hidden="true">
-            <span class="editorial-folded">Folded</span>
-            <span class="editorial-care">with Care</span>
-          </div>
           <canvas id="hero-canvas"></canvas>
           <!-- Loading shimmer while GLB loads -->
           <div class="hero-3d-loading" id="hero-3d-loading">

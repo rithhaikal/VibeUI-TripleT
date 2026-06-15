@@ -69,6 +69,21 @@
     radial-gradient(ellipse 50% 80% at 20% 80%, rgba(196, 154, 69, 0.06) 0%, transparent 60%);
 }
 
+/* ── Background texture overlay ───────────────────────────── */
+.hero-fullscreen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('/assets/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.15;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: luminosity;
+}
+
 /* ── Editorial background typography ─────────────────────── */
 .hero-editorial-bg {
   position: absolute;
