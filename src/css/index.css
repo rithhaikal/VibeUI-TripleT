@@ -321,6 +321,43 @@ h1, h2, h3, h4, h5, h6 {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Delivery location grace-period dialog */
+.location-change-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.location-change-modal.is-open {
+  display: flex;
+}
+
+.location-change-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 30, 26, 0.62);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  animation: fadeIn 0.2s ease-out both;
+}
+
+.location-change-panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 34rem);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  border: 1px solid rgba(122, 111, 93, 0.15);
+  border-radius: 2rem;
+  background: #FFFFFF;
+  padding: 1.5rem;
+  box-shadow: 0 30px 80px -24px rgba(15, 30, 26, 0.45);
+}
+
 /* ----------------------------------------------------------
    Admin sidebar: ensure it shows as flex when not hidden
    ---------------------------------------------------------- */
