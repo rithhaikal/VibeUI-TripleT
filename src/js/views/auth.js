@@ -12,14 +12,11 @@ window.authViews = {
         <div class="auth-story-panel">
           <div class="relative z-10 max-w-lg">
             <div class="flex items-center gap-3 mb-10">
-              <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center p-1.5 shadow-xl">
-                <svg class="w-full h-full text-primary" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M70 20 C40 20, 25 45, 25 65 C25 80, 40 90, 60 90 C45 90, 35 80, 35 65 C35 45, 50 30, 70 20 Z" fill="#1E352F"/>
-                  <path d="M45 35 V75 M55 35 V75 M45 55 H55" stroke="#C49A45" stroke-width="8" stroke-linecap="round"/>
-                </svg>
+              <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center p-0.5 shadow-xl">
+                <img src="assets/sponsor/logo.jpeg" class="w-full h-full object-cover rounded-xl" alt="Hot Meal Ba Logo">
               </div>
               <div>
-                <span class="font-display font-bold text-xl text-white block">好米巴 Hot Meal Bar</span>
+                <span class="font-display font-bold text-xl text-white block">好米巴 Hot Meal Ba</span>
                 <span class="text-[10px] text-white/55 font-semibold tracking-wide">Chinese Muslim · KTF Alumni UTM</span>
               </div>
             </div>
@@ -46,7 +43,7 @@ window.authViews = {
             <div class="mb-7">
               <span class="text-[10px] font-bold text-accent uppercase tracking-wider">Student access</span>
               <h2 class="font-display text-3xl font-extrabold text-primary mt-1">Welcome back</h2>
-              <p class="text-xs text-secondary-light mt-2">Choose how you want to enter Hot Meal Bar.</p>
+              <p class="text-xs text-secondary-light mt-2">Choose how you want to enter Hot Meal Ba.</p>
             </div>
 
             <div class="grid grid-cols-2 gap-2 bg-background-dark/60 rounded-2xl p-1.5 mb-6">
